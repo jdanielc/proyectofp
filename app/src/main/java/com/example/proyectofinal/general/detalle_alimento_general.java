@@ -1,35 +1,27 @@
-package com.example.proyectofinal;
+package com.example.proyectofinal.general;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.ActionBarOverlayLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.example.proyectofinal.Principal.Adapter;
-import com.example.proyectofinal.Principal.IComunicaFragments;
-import com.example.proyectofinal.general.alimentoVo;
-import com.example.proyectofinal.general.detalle_alimento_general;
-
-import java.util.ArrayList;
+import com.example.proyectofinal.R;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FragmentAlimentosPrincipal.OnFragmentInteractionListener} interface
+ * {@link detalle_alimento_general.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FragmentAlimentosPrincipal#newInstance} factory method to
+ * Use the {@link detalle_alimento_general#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentAlimentosPrincipal extends Fragment {
+public class detalle_alimento_general extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,13 +33,10 @@ public class FragmentAlimentosPrincipal extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    RecyclerView recyclerView;
-    ArrayList<alimentoVo> listaAlimentos;
+    TextView txtDetalle;
+    ImageView imageDetalle;
 
-    Activity activity;
-    IComunicaFragments interfaceComunicaFragments;
-
-    public FragmentAlimentosPrincipal() {
+    public detalle_alimento_general() {
         // Required empty public constructor
     }
 
@@ -57,11 +46,11 @@ public class FragmentAlimentosPrincipal extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentAlimentosPrincipal.
+     * @return A new instance of fragment detalle_alimento_general.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentAlimentosPrincipal newInstance(String param1, String param2) {
-        FragmentAlimentosPrincipal fragment = new FragmentAlimentosPrincipal();
+    public static detalle_alimento_general newInstance(String param1, String param2) {
+        detalle_alimento_general fragment = new detalle_alimento_general();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -82,39 +71,23 @@ public class FragmentAlimentosPrincipal extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View vista = inflater.inflate(R.layout.fragment_fragment_alimentos_principal, container, false);
+        View vista = inflater.inflate(R.layout.fragment_detalle_alimento_general, container, false);
 
-        listaAlimentos = new ArrayList<>();
-        recyclerView = (RecyclerView) vista.findViewById(R.id.recyclerAlimentosId);
+        txtDetalle = vista.findViewById(R.id.descripcionDetalleId);
+        imageDetalle = vista.findViewById(R.id.imgenDetalleId);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        Bundle objetoAlimento = getArguments();
 
-        llenarLista();
+        alimentoVo alimentoVo = null;
 
-        Adapter adapter = new Adapter(listaAlimentos);
-        recyclerView.setAdapter(adapter);
-
-
-        adapter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(),"Selección" + listaAlimentos.get(recyclerView.getChildAdapterPosition(v)).getNombre(), Toast.LENGTH_LONG).show();
-
-                interfaceComunicaFragments.enviarAlimento(listaAlimentos.get(recyclerView.getChildAdapterPosition(v)));
-            }
-        });
+        //si hay contenido en el bundle lo volcamos al objeto alimentoVo
+        if(objetoAlimento != null){
+            alimentoVo = (com.example.proyectofinal.general.alimentoVo) objetoAlimento.getSerializable("objeto");
+            imageDetalle.setImageResource(alimentoVo.getImagenDetalle());
+            txtDetalle.setText(alimentoVo.getDescripcion());
+        }
 
         return vista;
-    }
-
-    private void llenarLista() {
-        listaAlimentos.add(new alimentoVo("Nombre1","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre2","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre3","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre4","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre5","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre6","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -127,12 +100,6 @@ public class FragmentAlimentosPrincipal extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        if(context instanceof  Activity){
-            this.activity = (Activity) context;
-            interfaceComunicaFragments = (IComunicaFragments) this.activity;
-        }
-
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -161,5 +128,4 @@ public class FragmentAlimentosPrincipal extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 }

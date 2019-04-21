@@ -1,6 +1,8 @@
 package com.example.proyectofinal.general;
 
-public class alimentoVo {
+import java.io.Serializable;
+
+public class alimentoVo implements Serializable {
 
     public String getNombre() {
         return nombre;

@@ -15,9 +15,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.proyectofinal.Principal.IComunicaFragments;
+import com.example.proyectofinal.general.alimentoVo;
+import com.example.proyectofinal.general.detalle_alimento_general;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentAlimentosPrincipal.OnFragmentInteractionListener,
-        FragmentInicial.OnFragmentInteractionListener{
+        FragmentInicial.OnFragmentInteractionListener, IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener {
+
+    FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
+    FragmentInicial fragmentInicial;
+    detalle_alimento_general detalle_alimento_general;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,5 +124,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void enviarAlimento(alimentoVo alimentoVo) {
+        detalle_alimento_general = new detalle_alimento_general();
+
+        Bundle bundleEnvio = new Bundle();
+
+        bundleEnvio.putSerializable("objeto", alimentoVo);
+
+        detalle_alimento_general.setArguments(bundleEnvio);
+
+        //cargar el fragment en el activity
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_main, detalle_alimento_general).addToBackStack(null)
+                .commit();
     }
 }
