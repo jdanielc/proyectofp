@@ -79,6 +79,7 @@ public class alimentoVo implements Serializable {
     private String nombre;
     private String info;
     private int imagenId;
+    private int ID;
 
     private String descripcion;
     private int upvotes;
@@ -87,11 +88,11 @@ public class alimentoVo implements Serializable {
     private int imagenDetalle;
     private boolean favorito;
 
-    public alimentoVo(String nombre, String info, int imagenId, String descripcion, int upvotes, int downvotes, int user, int imagenDetalle, boolean favorito){
+    public alimentoVo(int ID, String nombre, String info, int imagenId, String descripcion, int upvotes, int downvotes, int user, int imagenDetalle, boolean favorito){
         this.nombre = nombre;
         this.info = info;
         this.imagenId = imagenId;
-
+        this.ID = ID;
         this.descripcion = descripcion;
         this.upvotes = upvotes;
         this.downvotes = downvotes;

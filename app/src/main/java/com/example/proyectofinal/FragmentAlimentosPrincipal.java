@@ -3,11 +3,13 @@ package com.example.proyectofinal;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ActionBarOverlayLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,14 @@ import com.example.proyectofinal.Principal.Adapter;
 import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.general.alimentoVo;
 import com.example.proyectofinal.general.detalle_alimento_general;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -46,6 +56,7 @@ public class FragmentAlimentosPrincipal extends Fragment {
 
     Activity activity;
     IComunicaFragments interfaceComunicaFragments;
+    Adapter adapter;
 
     public FragmentAlimentosPrincipal() {
         // Required empty public constructor
@@ -89,9 +100,10 @@ public class FragmentAlimentosPrincipal extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        llenarLista();
+       // llenarLista();
+        new Listar().execute();
 
-        Adapter adapter = new Adapter(listaAlimentos);
+        adapter = new Adapter(listaAlimentos);
         recyclerView.setAdapter(adapter);
 
 
@@ -107,15 +119,7 @@ public class FragmentAlimentosPrincipal extends Fragment {
         return vista;
     }
 
-    private void llenarLista() {
-        listaAlimentos.add(new alimentoVo("Nombre1","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre2","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre3","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre4","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre5","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
-        listaAlimentos.add(new alimentoVo("Nombre6","Lorem Ipsum", R.drawable.plato,"Lorem Ipsum, est Alea",0,0,0, R.drawable.plato, false));
 
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -160,6 +164,83 @@ public class FragmentAlimentosPrincipal extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    private class Listar extends AsyncTask<String,Integer,Boolean> {
+
+        private ArrayList<alimentoVo> array = new ArrayList<alimentoVo>();
+        private boolean favorito;
+
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpGet del =
+                    new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento");
+
+            del.setHeader("content-type", "application/json");
+
+            try
+            {
+                HttpResponse resp = httpClient.execute(del);
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                JSONArray mensajes = new JSONArray(respStr);
+
+                for(int i =0; i<mensajes.length(); i++){
+
+                    JSONObject mensaje = mensajes.getJSONObject(i);
+
+                    int id = mensaje.getInt("ID");
+                    String nombre = mensaje.getString("nombre");
+                    String info = mensaje.getString("info");
+                    int icono = mensaje.getInt("iconoId");
+                    int upvotes = mensaje.getInt("upvotes");
+                    int downvotes= mensaje.getInt("downvotes");
+                    int usuario= mensaje.getInt("usuario");
+                    String descripcion = mensaje.getString("descripcion");
+                    int imagen = mensaje.getInt("imagenDetalle");
+
+                    int fav =  mensaje.getInt("favoritos");
+
+                    isFavorite(fav);
+
+                    alimentoVo elemento = new alimentoVo(id, nombre, info, R.drawable.plato,descripcion, upvotes, downvotes,
+                            usuario, R.drawable.plato, favorito);
+
+                    listaAlimentos.add(elemento);
+                }
+
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+                //Rellenamos la lista con los nombres de los clientes
+                //Rellenamos la lista con los resultados
+                adapter.updateList(listaAlimentos);
+            }
+        }
+
+        private void isFavorite(int fav){
+            if(fav == 1){
+                favorito = true;
+            }else{
+                favorito = false;
+            }
+        }
     }
 
 }

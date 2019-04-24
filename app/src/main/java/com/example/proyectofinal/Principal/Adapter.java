@@ -52,6 +52,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder> im
         }
     }
 
+    public void updateList(ArrayList<alimentoVo> listaNueva){
+        listaAlimentos = new ArrayList<>();
+        listaAlimentos.addAll(listaNueva);
+        notifyDataSetChanged();
+    }
+
+
     public class AlimentoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView txtNombre,txtInformacion;
         ImageView foto;
