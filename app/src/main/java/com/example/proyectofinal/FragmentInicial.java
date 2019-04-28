@@ -2,11 +2,30 @@ package com.example.proyectofinal;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.proyectofinal.Principal.Adapter;
+import com.example.proyectofinal.Principal.AdapterInicio;
+import com.example.proyectofinal.general.alimentoGeneral;
+import com.example.proyectofinal.general.alimentoVo;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 /**
@@ -28,6 +47,12 @@ public class FragmentInicial extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    //ELEMENTOS QUE VOY CREANDO
+    RecyclerView recyclerInicial;
+    ArrayList<alimentoGeneral> listaAlimentos;
+    AdapterInicio adapterInicio;
+
 
     public FragmentInicial() {
         // Required empty public constructor
@@ -64,7 +89,19 @@ public class FragmentInicial extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragment_inicial, container, false);
+        View vista = inflater.inflate(R.layout.fragment_fragment_inicial, container, false);
+
+        recyclerInicial = vista.findViewById(R.id.idRecyclerInicial);
+        listaAlimentos = new ArrayList<>();
+        recyclerInicial.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        new Listar().execute();
+
+        adapterInicio = new AdapterInicio(listaAlimentos);
+
+        recyclerInicial.setAdapter(adapterInicio);
+
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,5 +141,73 @@ public class FragmentInicial extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    private class Listar extends AsyncTask<String,Integer,Boolean> {
+
+        private ArrayList<alimentoVo> array = new ArrayList<alimentoVo>();
+        private boolean favorito;
+
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpGet del =
+                    new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/inicial");
+
+            del.setHeader("content-type", "application/json");
+
+            try
+            {
+                HttpResponse resp = httpClient.execute(del);
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                JSONArray mensajes = new JSONArray(respStr);
+
+                for(int i =0; i<mensajes.length(); i++){
+
+                    JSONObject mensaje = mensajes.getJSONObject(i);
+
+                    String nombre = mensaje.getString("nombre");
+                    String info = mensaje.getString("info");
+                    int icono = mensaje.getInt("imagen");
+                    int fav =  mensaje.getInt("favorito");
+
+                    ///LOS FAVORIOS AUN NO ESTAN CONTROLADOS
+                    isFavorite(fav);
+
+                    alimentoGeneral elemento = new alimentoGeneral(nombre, info, R.drawable.plato, favorito);
+
+                    listaAlimentos.add(elemento);
+                }
+
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+                //Rellenamos la lista con los nombres de los clientes
+                //Rellenamos la lista con los resultados
+                adapterInicio.updateList(listaAlimentos);
+            }
+        }
+
+        private void isFavorite(int fav){
+            if(fav == 1){
+                favorito = true;
+            }else{
+                favorito = false;
+            }
+        }
     }
 }

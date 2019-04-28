@@ -10,7 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.proyectofinal.MainActivity;
+import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.R;
+import com.example.proyectofinal.menu_creacion;
 
 
 /**
@@ -21,7 +24,7 @@ import com.example.proyectofinal.R;
  * Use the {@link detalle_alimento_general#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class detalle_alimento_general extends Fragment {
+public class detalle_alimento_general extends Fragment implements IComunicaFragments {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,6 +38,8 @@ public class detalle_alimento_general extends Fragment {
 
     TextView txtDetalle;
     ImageView imageDetalle;
+
+    menu_creacion menu_creacion;
 
     public detalle_alimento_general() {
         // Required empty public constructor
@@ -112,6 +117,27 @@ public class detalle_alimento_general extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void enviarAlimento(alimentoVo alimentoVo) {
+        //
+    }
+
+    @Override
+    public void tipoAccion(String action) {
+       menu_creacion = new menu_creacion();
+
+        Bundle bundleEnvio = new Bundle();
+
+
+        //AQUI SE PONE EL TIPO DE ACCION A REALIZAR
+        bundleEnvio.putSerializable("accion", "");
+
+        menu_creacion.setArguments(bundleEnvio);
+
+       // MainActivity main = new MainActivity();
+       // main.changeScene(menu_creacion);
     }
 
     /**

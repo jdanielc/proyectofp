@@ -7,6 +7,17 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string-array name="tipos">
+        <item>Bebidas</item>
+        <item>Bebidas Alcoholicas</item>
+        <item>Cereales y Legumbres</item>
+        <item>Dulces y Golosinas</item>
+        <item>Platos Precocinados</item>
+        <item>Salsas y Especias</item>
+
+    </string-array>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

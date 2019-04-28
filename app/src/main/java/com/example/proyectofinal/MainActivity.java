@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,11 +22,13 @@ import com.example.proyectofinal.general.detalle_alimento_general;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentAlimentosPrincipal.OnFragmentInteractionListener,
-        FragmentInicial.OnFragmentInteractionListener, IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener {
+        FragmentInicial.OnFragmentInteractionListener, IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener
+        {
 
     FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
     FragmentInicial fragmentInicial;
     detalle_alimento_general detalle_alimento_general;
+    menu_creacion pantallaCreacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,16 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //CARGA EL FRAGMENT AL INICIAR LA APLICACIÓN
+        FragmentTransaction transaction = ((MainActivity) this).getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_main, new FragmentInicial(), "fragment_preguntas");
+        transaction.commit();
+
+       // getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new FragmentInicial()).commit();
+
+
     }
 
     @Override
@@ -95,13 +108,15 @@ public class MainActivity extends AppCompatActivity
 
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+           // fragment = new FragmentInicial();
+            fragmentSeleccionado = true;
         } else if (id == R.id.nav_gallery) {
             fragment = new FragmentAlimentosPrincipal();
             fragmentSeleccionado = true;
 
         } else if (id == R.id.nav_slideshow) {
-
+            fragment = new FragmentInicial();
+            fragmentSeleccionado = true;
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -142,4 +157,16 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.content_main, detalle_alimento_general).addToBackStack(null)
                 .commit();
     }
+
+    @Override
+    public void tipoAccion(String action) {
+        //
+        //
+    }
+/*
+    public void changeScene(Fragment fragment){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_main, fragment).addToBackStack(null)
+                .commit();
+    }*/
 }

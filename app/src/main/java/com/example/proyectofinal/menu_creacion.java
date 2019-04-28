@@ -7,6 +7,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.example.proyectofinal.Principal.IComunicaFragments;
 
 
 /**
@@ -17,7 +25,7 @@ import android.view.ViewGroup;
  * Use the {@link menu_creacion#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class menu_creacion extends Fragment {
+public class menu_creacion extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,6 +36,21 @@ public class menu_creacion extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    IComunicaFragments interfaceComunica;
+    String action;
+
+    //ELEMENTOS VISUALES DE LA PANTALLA
+    Spinner spinner;
+
+    TextView txtID;
+    TextView txtSpinner;
+
+    EditText newID;
+    EditText newNombre;
+    EditText newInfo;
+    EditText newDescripcion;
+    Button btAceptar;
 
     public menu_creacion() {
         // Required empty public constructor
@@ -58,13 +81,81 @@ public class menu_creacion extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_menu_creacion, container, false);
+
+        View vista = inflater.inflate(R.layout.fragment_menu_creacion, container, false);
+
+        Bundle tipoAccion = getArguments();
+
+        if(tipoAccion != null){
+            action = (String) tipoAccion.getSerializable("accion");
+
+        }
+
+
+
+        newID = vista.findViewById(R.id.txtID);
+        newNombre = vista.findViewById(R.id.txtNombre);
+        newInfo = vista.findViewById(R.id.txtInfo);
+        newDescripcion = vista.findViewById(R.id.txtDescripcion);
+
+        txtID = vista.findViewById(R.id.txtID);
+        txtSpinner = vista.findViewById(R.id.textSpinner);
+
+        //CONFIGURANDO AL SPINNER
+        spinner = vista.findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(), R.array.tipos, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selection = parent.getItemAtPosition(position).toString();
+
+                switch (selection){
+                    case "Bebidas": ;break;
+                    case "Bebidas Alcoholicas": ;break;
+                    case "Cereales y Legumbres": ;break;
+                    case "Dulces y Golosinas": ;break;
+                    case "Platos Precocinados": ;break;
+                    case "Salsas y Especias": ;break;
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        seleccion();
+
+
+        return vista;
+    }
+
+    private void seleccion() {
+        switch (action){
+            case "añadir":
+                newID.setVisibility(View.INVISIBLE);
+                txtID.setVisibility(View.INVISIBLE);
+            break;
+            case "eliminar":
+                spinner.setVisibility(View.INVISIBLE);
+                txtSpinner.setVisibility(View.INVISIBLE);
+                break;
+
+            case "": ;break;
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -90,6 +181,7 @@ public class menu_creacion extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
