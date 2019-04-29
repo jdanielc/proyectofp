@@ -101,12 +101,12 @@ public class menu_creacion extends Fragment{
 
 
 
-        newID = vista.findViewById(R.id.txtID);
+     //   newID = vista.findViewById(R.id.txtID);
         newNombre = vista.findViewById(R.id.txtNombre);
         newInfo = vista.findViewById(R.id.txtInfo);
         newDescripcion = vista.findViewById(R.id.txtDescripcion);
 
-        txtID = vista.findViewById(R.id.txtID);
+        //txtID = vista.findViewById(R.id.txtID);
         txtSpinner = vista.findViewById(R.id.textSpinner);
 
         //CONFIGURANDO AL SPINNER

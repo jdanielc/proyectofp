@@ -2,9 +2,15 @@ package com.example.proyectofinal.general;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,6 +20,10 @@ import com.example.proyectofinal.MainActivity;
 import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.R;
 import com.example.proyectofinal.menu_creacion;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 
 /**
@@ -40,6 +50,9 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
     ImageView imageDetalle;
 
     menu_creacion menu_creacion;
+
+    alimentoVo alimentoVo = null;
+
 
     public detalle_alimento_general() {
         // Required empty public constructor
@@ -70,6 +83,8 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -83,7 +98,7 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
 
         Bundle objetoAlimento = getArguments();
 
-        alimentoVo alimentoVo = null;
+
 
         //si hay contenido en el bundle lo volcamos al objeto alimentoVo
         if(objetoAlimento != null){
@@ -154,4 +169,68 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.findItem(R.id.idBuscar).setVisible(false);
+
+        MenuItem añadir = menu.findItem(R.id.idMenuAñadir);
+        MenuItem mod = menu.findItem(R.id.idMenuModificar);
+        MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
+
+        añadir.setVisible(true);
+        mod.setVisible(true);
+        eliminar.setVisible(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+        Fragment fragment = null;
+        boolean fragmentSeleccionado = false;
+        MainActivity mainActivity = ((MainActivity)getActivity());
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.idMenuAñadir) {
+
+            fragment = new menu_creacion();
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_detalle_alimento_general, fragment, "findThisFragment")
+                    .addToBackStack(null)
+                    .commit();
+
+           /* fragmentSeleccionado = true;
+            mainActivity.changeScene(fragment, R.id.fragment_detalle_alimento_general);
+*/
+
+            //return true;
+        }
+
+
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public void Downvote(View view){
+        int preDown = alimentoVo.getDownvotes();
+        preDown++;
+        alimentoVo.setDownvotes(preDown);
+    }
+
+    public void Upvote(View view){
+        int preDown = alimentoVo.getUpvotes();
+        preDown++;
+        alimentoVo.setUpvotes(preDown);
+    }
+
+
 }

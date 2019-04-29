@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
        // getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new FragmentInicial()).commit();
 
 
+
     }
 
     @Override
@@ -80,6 +81,16 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem añadir = menu.findItem(R.id.idMenuAñadir);
+        MenuItem mod = menu.findItem(R.id.idMenuModificar);
+        MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
+
+        añadir.setVisible(false);
+        mod.setVisible(false);
+        eliminar.setVisible(false);
+
+
+
         return true;
     }
 
@@ -91,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.idMenuAñadir) {
             return true;
         }
 
@@ -108,7 +119,7 @@ public class MainActivity extends AppCompatActivity
 
 
         if (id == R.id.nav_camera) {
-           // fragment = new FragmentInicial();
+            fragment = new FragmentInicial();
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_gallery) {
             fragment = new FragmentAlimentosPrincipal();
@@ -163,10 +174,10 @@ public class MainActivity extends AppCompatActivity
         //
         //
     }
-/*
-    public void changeScene(Fragment fragment){
+
+    public void changeScene(Fragment fragment, int out){
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_main, fragment).addToBackStack(null)
+                .replace(out, fragment).addToBackStack(null)
                 .commit();
-    }*/
+    }
 }

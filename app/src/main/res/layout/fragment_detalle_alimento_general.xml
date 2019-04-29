@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".general.detalle_alimento_general">
+    tools:context=".general.detalle_alimento_general"
+    android:id="@+id/fragment_detalle_alimento_general">
 
     <ImageView
         android:id="@+id/imgenDetalleId"
@@ -19,4 +20,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Descripcion"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btUpvote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UPVOTE"
+            android:layout_marginRight="5dp"/>
+        <Button
+            android:id="@+id/btDownvote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="downvote"/>
+    </LinearLayout>
 </LinearLayout>

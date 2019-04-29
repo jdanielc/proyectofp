@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/action_settings"
+        android:title="ItemBuscar"
+        android:id="@+id/idBuscar"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.SearchView"
+        />
+
+    <group android:id="@+id/grupoMod">
+    <item
+        android:id="@+id/idMenuAñadir"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="Añadir"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/idMenuModificar"
+        android:orderInCategory="100"
+        android:title="Modificar"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/idMenuEliminar"
+        android:orderInCategory="100"
+        android:title="Eliminar"
+        app:showAsAction="never" />
+    </group>
+
 </menu>
+

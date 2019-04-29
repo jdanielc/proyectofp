@@ -15,11 +15,12 @@
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="116dp"
         android:layout_marginBottom="9dp"
         android:text="Nombre"
         app:layout_constraintBottom_toTopOf="@+id/newNombreID"
         app:layout_constraintStart_toStartOf="@+id/newNombreID"
-        app:layout_constraintTop_toBottomOf="@+id/newID" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/newDescripcionID"
@@ -98,10 +99,10 @@
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="21dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="21dp"
         app:layout_constraintBottom_toTopOf="@+id/btAceptar"
         app:layout_constraintEnd_toEndOf="@+id/newDescripcionID"
         app:layout_constraintStart_toStartOf="@+id/btAceptar"
@@ -113,37 +114,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginBottom="218dp"
+        android:layout_marginBottom="217dp"
         android:text="Aceptar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner" />
-
-    <TextView
-        android:id="@+id/txtID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="12dp"
-        android:text="ID"
-        app:layout_constraintBottom_toTopOf="@+id/newID"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/newID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginBottom="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/txtNombre"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtID" />
 
 </android.support.constraint.ConstraintLayout>
