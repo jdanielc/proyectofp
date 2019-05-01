@@ -1,7 +1,10 @@
 package com.example.proyectofinal;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -15,20 +18,45 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
 import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.general.alimentoVo;
 import com.example.proyectofinal.general.detalle_alimento_general;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AdditionalUserInfo;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentAlimentosPrincipal.OnFragmentInteractionListener,
-        FragmentInicial.OnFragmentInteractionListener, IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener
+        FragmentInicial.OnFragmentInteractionListener, IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener,
+        Opciones.OnFragmentInteractionListener
         {
+
+
+    private static final int MY_REQUEST_CODE = 7117;
+    List<AuthUI.IdpConfig> providers;
+    String usuario;
 
     FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
     FragmentInicial fragmentInicial;
     detalle_alimento_general detalle_alimento_general;
     menu_creacion pantallaCreacion;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +93,59 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
+
+        //AUTENTIFICACIÓN
+        providers= Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),//Email Builder
+                new AuthUI.IdpConfig.PhoneBuilder().build(),//Phone Builder
+                new AuthUI.IdpConfig.GoogleBuilder().build()//Email Builder
+
+        );
+
+
+        showSignInOption();
+
+
     }
 
-    @Override
+            public void showSignInOption() {
+                startActivityForResult(
+                        AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).setTheme(R.style.MyTheme)
+                        .build(), MY_REQUEST_CODE
+                );
+            }
+
+            @Override
+            protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                super.onActivityResult(requestCode, resultCode, data);
+                if(requestCode == MY_REQUEST_CODE){
+                    IdpResponse response = IdpResponse.fromResultIntent(data);
+
+                    if(resultCode == RESULT_OK){
+                        //Get User
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        //Show email
+                        usuario = user.getUid();
+
+
+                        if(response.isNewUser()){
+                            MySQLFirebase mySQLFirebase = new MySQLFirebase();
+                            MySQLFirebase.Insertar insertar = new MySQLFirebase.Insertar();
+                            insertar.execute(                                    user.getUid(),
+                                    user.getDisplayName(),
+                                    user.getEmail()
+                            );
+
+
+                        }
+                    }else{
+                        Toast.makeText(this, ""+response.getError().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -91,6 +169,8 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
+
         return true;
     }
 
@@ -106,9 +186,11 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
     }
 
+    ///SELECCIONA EL FRAGMENT EN EL MENU LATERAL
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -133,7 +215,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            fragment = new Opciones();
+            fragmentSeleccionado = true;
         }
 
 
@@ -175,9 +258,15 @@ public class MainActivity extends AppCompatActivity
         //
     }
 
+
     public void changeScene(Fragment fragment, int out){
         getSupportFragmentManager().beginTransaction()
                 .replace(out, fragment).addToBackStack(null)
                 .commit();
+    }
+
+
+     public String getUsuario() {
+                return usuario;
     }
 }

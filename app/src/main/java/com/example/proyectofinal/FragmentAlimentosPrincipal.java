@@ -200,11 +200,10 @@ public class FragmentAlimentosPrincipal extends Fragment {
                     int icono = mensaje.getInt("iconoId");
                     int upvotes = mensaje.getInt("upvotes");
                     int downvotes= mensaje.getInt("downvotes");
-                    int usuario= mensaje.getInt("usuario");
                     String descripcion = mensaje.getString("descripcion");
                     int imagen = mensaje.getInt("imagenDetalle");
-
                     int fav =  mensaje.getInt("favoritos");
+                    int usuario= mensaje.getInt("usuario");
 
                     isFavorite(fav);
 

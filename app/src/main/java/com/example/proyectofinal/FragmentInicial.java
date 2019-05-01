@@ -235,5 +235,12 @@ public class FragmentInicial extends Fragment {
                 favorito = false;
             }
         }
+
+
+    }
+
+    //EN CASO DE FAVORITO
+    public void fav(View view){
+
     }
 }

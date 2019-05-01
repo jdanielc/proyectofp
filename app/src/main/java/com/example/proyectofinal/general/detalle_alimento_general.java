@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -200,17 +201,20 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
         if (id == R.id.idMenuAñadir) {
 
             fragment = new menu_creacion();
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.fragment_detalle_alimento_general, fragment).commit();
+            /*
 
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_detalle_alimento_general, fragment, "findThisFragment")
                     .addToBackStack(null)
                     .commit();
 
-           /* fragmentSeleccionado = true;
+           fragmentSeleccionado = true;
             mainActivity.changeScene(fragment, R.id.fragment_detalle_alimento_general);
 */
 
-            //return true;
+            return true;
         }
 
 

@@ -2,30 +2,34 @@ package com.example.proyectofinal;
 
 import android.content.Context;
 import android.net.Uri;
+import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.proyectofinal.Principal.IComunicaFragments;
+import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AdditionalUserInfo;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link menu_creacion.OnFragmentInteractionListener} interface
+ * {@link Opciones.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link menu_creacion#newInstance} factory method to
+ * Use the {@link Opciones#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class menu_creacion extends Fragment{
+public class Opciones extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -37,22 +41,11 @@ public class menu_creacion extends Fragment{
 
     private OnFragmentInteractionListener mListener;
 
-    IComunicaFragments interfaceComunica;
-    String action;
 
-    //ELEMENTOS VISUALES DE LA PANTALLA
-    Spinner spinner;
+    Button logOut;
 
-    TextView txtID;
-    TextView txtSpinner;
 
-    EditText newID;
-    EditText newNombre;
-    EditText newInfo;
-    EditText newDescripcion;
-    Button btAceptar;
-
-    public menu_creacion() {
+    public Opciones() {
         // Required empty public constructor
     }
 
@@ -62,11 +55,11 @@ public class menu_creacion extends Fragment{
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment menu_creacion.
+     * @return A new instance of fragment Opciones.
      */
     // TODO: Rename and change types and number of parameters
-    public static menu_creacion newInstance(String param1, String param2) {
-        menu_creacion fragment = new menu_creacion();
+    public static Opciones newInstance(String param1, String param2) {
+        Opciones fragment = new Opciones();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -82,79 +75,47 @@ public class menu_creacion extends Fragment{
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View vista = inflater.inflate(R.layout.fragment_opciones, container, false);
 
-        View vista = inflater.inflate(R.layout.fragment_menu_creacion, container, false);
-
-        Bundle tipoAccion = getArguments();
-
-        if(tipoAccion != null){
-            action = (String) tipoAccion.getSerializable("accion");
-
-        }
+        logOut = vista.findViewById(R.id.btLogOut);
 
 
-
-     //   newID = vista.findViewById(R.id.txtID);
-        newNombre = vista.findViewById(R.id.txtNombre);
-        newInfo = vista.findViewById(R.id.txtInfo);
-        newDescripcion = vista.findViewById(R.id.txtDescripcion);
-
-        //txtID = vista.findViewById(R.id.txtID);
-        txtSpinner = vista.findViewById(R.id.textSpinner);
-
-        //CONFIGURANDO AL SPINNER
-        spinner = vista.findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(), R.array.tipos, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        logOut.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selection = parent.getItemAtPosition(position).toString();
+            public void onClick(View v) {
+                //Log Out
+                AuthUI.getInstance().signOut(getContext())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                logOut.setEnabled(false);
 
-                switch (selection){
-                    case "Bebidas": ;break;
-                    case "Bebidas Alcoholicas": ;break;
-                    case "Cereales y Legumbres": ;break;
-                    case "Dulces y Golosinas": ;break;
-                    case "Platos Precocinados": ;break;
-                    case "Salsas y Especias": ;break;
-                }
 
-            }
+                                MainActivity mainActivity = (MainActivity) getActivity();
+                                mainActivity.showSignInOption();
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
 
+
+
+
+                                //(MainActivity)getActivity().showSignInOption();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
-        seleccion();
-
-
         return vista;
-    }
-
-    private void seleccion() {
-        switch (action){
-            case "añadir":
-                newID.setVisibility(View.INVISIBLE);
-                txtID.setVisibility(View.INVISIBLE);
-            break;
-            case "eliminar":
-                spinner.setVisibility(View.INVISIBLE);
-                txtSpinner.setVisibility(View.INVISIBLE);
-                break;
-
-            case "": ;break;
-        }
 
     }
 
@@ -182,7 +143,6 @@ public class menu_creacion extends Fragment{
         mListener = null;
     }
 
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -197,6 +157,4 @@ public class menu_creacion extends Fragment{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }
