@@ -3,12 +3,12 @@ package com.example.proyectofinal;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,25 +18,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
 import com.example.proyectofinal.Principal.IComunicaFragments;
+import com.example.proyectofinal.general.Modelo;
 import com.example.proyectofinal.general.alimentoVo;
 import com.example.proyectofinal.general.detalle_alimento_general;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AdditionalUserInfo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,13 +41,16 @@ public class MainActivity extends AppCompatActivity
 
 
     private static final int MY_REQUEST_CODE = 7117;
-    List<AuthUI.IdpConfig> providers;
-    String usuario;
 
-    FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
+            private static String usuario;
+            List<AuthUI.IdpConfig> providers;
+
+
+     FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
     FragmentInicial fragmentInicial;
     detalle_alimento_general detalle_alimento_general;
     menu_creacion pantallaCreacion;
+
 
 
 
@@ -64,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +104,9 @@ public class MainActivity extends AppCompatActivity
         showSignInOption();
 
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //Show email
+
     }
 
             public void showSignInOption() {
@@ -125,12 +125,14 @@ public class MainActivity extends AppCompatActivity
                     if(resultCode == RESULT_OK){
                         //Get User
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        //Show email
+
                         usuario = user.getUid();
+                        //Show email
+
+
 
 
                         if(response.isNewUser()){
-                            MySQLFirebase mySQLFirebase = new MySQLFirebase();
                             MySQLFirebase.Insertar insertar = new MySQLFirebase.Insertar();
                             insertar.execute(                                    user.getUid(),
                                     user.getDisplayName(),
@@ -243,6 +245,8 @@ public class MainActivity extends AppCompatActivity
 
         bundleEnvio.putSerializable("objeto", alimentoVo);
 
+        bundleEnvio.putSerializable("usuario", usuario);
+
         detalle_alimento_general.setArguments(bundleEnvio);
 
         //cargar el fragment en el activity
@@ -266,7 +270,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-     public String getUsuario() {
+     public static String getUsuario() {
                 return usuario;
     }
 }

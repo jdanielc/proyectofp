@@ -1,10 +1,13 @@
 package com.example.proyectofinal;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ActionBarOverlayLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,20 +18,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.proyectofinal.ObjetosFire.ControlFavoritos;
 import com.example.proyectofinal.Principal.Adapter;
 import com.example.proyectofinal.Principal.IComunicaFragments;
+import com.example.proyectofinal.general.Modelo;
 import com.example.proyectofinal.general.alimentoVo;
 import com.example.proyectofinal.general.detalle_alimento_general;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 /**
@@ -110,7 +121,7 @@ public class FragmentAlimentosPrincipal extends Fragment {
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(),"Selección" + listaAlimentos.get(recyclerView.getChildAdapterPosition(v)).getNombre(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(),"Selección" + listaAlimentos.get(recyclerView.getChildAdapterPosition(v)).getNombre(), Toast.LENGTH_LONG).show();
 
                 interfaceComunicaFragments.enviarAlimento(listaAlimentos.get(recyclerView.getChildAdapterPosition(v)));
             }
@@ -203,7 +214,7 @@ public class FragmentAlimentosPrincipal extends Fragment {
                     String descripcion = mensaje.getString("descripcion");
                     int imagen = mensaje.getInt("imagenDetalle");
                     int fav =  mensaje.getInt("favoritos");
-                    int usuario= mensaje.getInt("usuario");
+                    String usuario= mensaje.getString("usuario");
 
                     isFavorite(fav);
 
@@ -241,5 +252,9 @@ public class FragmentAlimentosPrincipal extends Fragment {
             }
         }
     }
+
+
+    //////////////////////
+
 
 }

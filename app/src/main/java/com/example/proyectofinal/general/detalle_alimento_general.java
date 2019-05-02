@@ -1,5 +1,6 @@
 package com.example.proyectofinal.general;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,15 +18,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.proyectofinal.MainActivity;
+import com.example.proyectofinal.ObjetosFire.ControlFavoritos;
+import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
 import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.R;
 import com.example.proyectofinal.menu_creacion;
+import com.google.firebase.auth.FirebaseAuth;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 /**
@@ -53,7 +67,9 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
     menu_creacion menu_creacion;
 
     alimentoVo alimentoVo = null;
+    ImageView idIconoFav;
 
+    Bundle objetoAlimento;
 
     public detalle_alimento_general() {
         // Required empty public constructor
@@ -96,8 +112,25 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
 
         txtDetalle = vista.findViewById(R.id.descripcionDetalleId);
         imageDetalle = vista.findViewById(R.id.imgenDetalleId);
+        idIconoFav = vista.findViewById(R.id.idIconoFav);
 
-        Bundle objetoAlimento = getArguments();
+        //OnClick para favoritos
+        idIconoFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                alimentoVo.setFavorito(!alimentoVo.isFavorito());
+
+                Actualizar();
+
+                //getFragmentManager().popBackStack();
+
+            }
+        });
+
+        objetoAlimento = getArguments();
+
 
 
 
@@ -203,16 +236,7 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
             fragment = new menu_creacion();
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.fragment_detalle_alimento_general, fragment).commit();
-            /*
 
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_detalle_alimento_general, fragment, "findThisFragment")
-                    .addToBackStack(null)
-                    .commit();
-
-           fragmentSeleccionado = true;
-            mainActivity.changeScene(fragment, R.id.fragment_detalle_alimento_general);
-*/
 
             return true;
         }
@@ -234,7 +258,30 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
         int preDown = alimentoVo.getUpvotes();
         preDown++;
         alimentoVo.setUpvotes(preDown);
+
     }
+
+
+    //Llama al metodo de actualizado de la base de datos
+    public void Actualizar(){
+
+
+
+        String usuario = objetoAlimento.getSerializable("usuario").toString();
+        String alimento = alimentoVo.getID()+"";
+
+        MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites();
+
+        listarAllFavorites.execute(
+                usuario,
+                alimento
+        );
+
+
+
+    }
+
+
 
 
 }
