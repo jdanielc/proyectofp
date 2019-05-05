@@ -8,14 +8,20 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ActionBarOverlayLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.proyectofinal.ObjetosFire.ControlFavoritos;
@@ -50,7 +56,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
  * Use the {@link FragmentAlimentosPrincipal#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentAlimentosPrincipal extends Fragment {
+public class FragmentAlimentosPrincipal extends Fragment implements SearchView.OnQueryTextListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -69,9 +75,13 @@ public class FragmentAlimentosPrincipal extends Fragment {
     IComunicaFragments interfaceComunicaFragments;
     Adapter adapter;
 
+    String usuario;
+    FloatingActionButton btNuevo;
+    boolean sonMisAlimentos;
+
     public FragmentAlimentosPrincipal() {
-        // Required empty public constructor
     }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -100,19 +110,63 @@ public class FragmentAlimentosPrincipal extends Fragment {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        //
         View vista = inflater.inflate(R.layout.fragment_fragment_alimentos_principal, container, false);
 
+        //ASIGNO EL RECYCLERVIEW Y EL ARRAYLIST
         listaAlimentos = new ArrayList<>();
         recyclerView = (RecyclerView) vista.findViewById(R.id.recyclerAlimentosId);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-       // llenarLista();
-        new Listar().execute();
+        //LLAMO A LA CLASE QUE LLENA EL ARRAYLIST, Y OBTENGO EL BOOLEAN QUE ME INDICA QUE DATOS CARGAR
+        boolean AlimentosSeleccionados = getArguments().getBoolean("mis");
+
+        //SI SE HA SOLICITA LOS ALIMENTOS DEL USUARIO ACTUAL, TOMAMOS DEL BUNDLE EL USUARIO
+
+        btNuevo = vista.findViewById(R.id.fab);
+
+        if(AlimentosSeleccionados){
+            usuario = getArguments().getString("usuario");
+
+            btNuevo.setVisibility(View.VISIBLE);
+            btNuevo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    menu_creacion menu_creacion1 = new menu_creacion();
+
+                    //Usamos el Bundle para pasar el tipo de accion a realizar
+                    Bundle bundle = new Bundle();
+
+                    bundle.putInt("tipo",1);
+                    bundle.putString("usuario",usuario);
+
+                    menu_creacion1.setArguments(bundle);
+                    //En caso de que se pulse el boton
+
+                        getActivity().getSupportFragmentManager().beginTransaction().
+                                replace(R.id.fragment_alimentos_principal, menu_creacion1).addToBackStack(null).commit();
+
+                         btNuevo.setVisibility(View.INVISIBLE);
+
+                }
+            });
+
+            sonMisAlimentos = true;
+        }else{
+                btNuevo.setVisibility(View.INVISIBLE);
+
+
+            sonMisAlimentos = false;
+
+        }
+
+        new Listar(AlimentosSeleccionados).execute();
 
         adapter = new Adapter(listaAlimentos);
         recyclerView.setAdapter(adapter);
@@ -121,15 +175,17 @@ public class FragmentAlimentosPrincipal extends Fragment {
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(getContext(),"Selección" + listaAlimentos.get(recyclerView.getChildAdapterPosition(v)).getNombre(), Toast.LENGTH_LONG).show();
 
-                interfaceComunicaFragments.enviarAlimento(listaAlimentos.get(recyclerView.getChildAdapterPosition(v)));
+                interfaceComunicaFragments.enviarAlimento(listaAlimentos.get(recyclerView.getChildAdapterPosition(v)), sonMisAlimentos);
+
             }
         });
 
+
+        setHasOptionsMenu(true);
+
         return vista;
     }
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -162,6 +218,48 @@ public class FragmentAlimentosPrincipal extends Fragment {
         mListener = null;
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.main, menu);
+
+
+        MenuItem mod = menu.findItem(R.id.idMenuModificar);
+        MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
+
+
+        mod.setVisible(false);
+        eliminar.setVisible(false);
+
+        MenuItem menuItem = menu.findItem(R.id.idBuscar);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        String userInput = newText.toLowerCase();
+        ArrayList<alimentoVo> newList = new ArrayList<alimentoVo>();
+        for(alimentoVo componente : listaAlimentos){
+            if(componente.getNombre().toLowerCase().contains(userInput) || componente.getDescripcion().toLowerCase().contains(userInput)){
+                newList.add(componente);
+            }
+        }
+        adapter.updateList(newList);
+        return true;
+    }
+
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -180,6 +278,12 @@ public class FragmentAlimentosPrincipal extends Fragment {
 
     private class Listar extends AsyncTask<String,Integer,Boolean> {
 
+        boolean AlimentosListar;
+
+        public Listar(boolean AlimentosListar){
+            this.AlimentosListar = AlimentosListar;
+        }
+
         private ArrayList<alimentoVo> array = new ArrayList<alimentoVo>();
         private boolean favorito;
 
@@ -188,14 +292,21 @@ public class FragmentAlimentosPrincipal extends Fragment {
             boolean resul = true;
 
             HttpClient httpClient = new DefaultHttpClient();
+            HttpGet del = null;
 
-            HttpGet del =
-                    new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento");
+            if(AlimentosListar){
+                del = new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento/" + usuario);
 
-            del.setHeader("content-type", "application/json");
+            }else {
+                del = new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento");
+
+            }
 
             try
             {
+
+                del.setHeader("content-type", "application/json");
+
                 HttpResponse resp = httpClient.execute(del);
                 String respStr = EntityUtils.toString(resp.getEntity());
 
@@ -213,13 +324,11 @@ public class FragmentAlimentosPrincipal extends Fragment {
                     int downvotes= mensaje.getInt("downvotes");
                     String descripcion = mensaje.getString("descripcion");
                     int imagen = mensaje.getInt("imagenDetalle");
-                    int fav =  mensaje.getInt("favoritos");
                     String usuario= mensaje.getString("usuario");
 
-                    isFavorite(fav);
 
                     alimentoVo elemento = new alimentoVo(id, nombre, info, R.drawable.plato,descripcion, upvotes, downvotes,
-                            usuario, R.drawable.plato, favorito);
+                            usuario, R.drawable.plato);
 
                     listaAlimentos.add(elemento);
                 }
@@ -244,17 +353,5 @@ public class FragmentAlimentosPrincipal extends Fragment {
             }
         }
 
-        private void isFavorite(int fav){
-            if(fav == 1){
-                favorito = true;
-            }else{
-                favorito = false;
-            }
-        }
     }
-
-
-    //////////////////////
-
-
 }

@@ -1,9 +1,17 @@
 package com.example.proyectofinal;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +21,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
 import com.example.proyectofinal.Principal.IComunicaFragments;
+import com.example.proyectofinal.general.alimentoVo;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 /**
@@ -37,20 +59,20 @@ public class menu_creacion extends Fragment{
 
     private OnFragmentInteractionListener mListener;
 
-    IComunicaFragments interfaceComunica;
-    String action;
-
+    int tipoAccion;
     //ELEMENTOS VISUALES DE LA PANTALLA
     Spinner spinner;
 
-    TextView txtID;
     TextView txtSpinner;
 
-    EditText newID;
     EditText newNombre;
     EditText newInfo;
     EditText newDescripcion;
     Button btAceptar;
+
+    int ImagenSeleccion;
+    String usuario;
+    alimentoVo alimento;
 
     public menu_creacion() {
         // Required empty public constructor
@@ -91,72 +113,94 @@ public class menu_creacion extends Fragment{
         // Inflate the layout for this fragment
 
         View vista = inflater.inflate(R.layout.fragment_menu_creacion, container, false);
+        vista.setBackgroundColor(Color.parseColor("#ffffff"));
 
-        Bundle tipoAccion = getArguments();
-
-        if(tipoAccion != null){
-            action = (String) tipoAccion.getSerializable("accion");
-
-        }
-
-
-
-     //   newID = vista.findViewById(R.id.txtID);
-        newNombre = vista.findViewById(R.id.txtNombre);
-        newInfo = vista.findViewById(R.id.txtInfo);
-        newDescripcion = vista.findViewById(R.id.txtDescripcion);
-
-        //txtID = vista.findViewById(R.id.txtID);
+        //Declaramos los elementos de la vista
+        newNombre = vista.findViewById(R.id.newNombreID);
+        newInfo = vista.findViewById(R.id.newInfoID);
+        newDescripcion = vista.findViewById(R.id.newDescripcionID);
+        spinner = vista.findViewById(R.id.spinner);
+        btAceptar = vista.findViewById(R.id.btAceptar);
         txtSpinner = vista.findViewById(R.id.textSpinner);
 
+
+        //Toma el id del tipo de accion que se desea realzar
+        tipoAccion = getArguments().getInt("tipo");
+
+        //Ajusta las variables necesarios dependiendo de la accion a realizar
+        if(tipoAccion == 1)
+        usuario = getArguments().getString("usuario");
+
+
         //CONFIGURANDO AL SPINNER
-        spinner = vista.findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(), R.array.tipos, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selection = parent.getItemAtPosition(position).toString();
-
+                btAceptar.setEnabled(true);
                 switch (selection){
-                    case "Bebidas": ;break;
-                    case "Bebidas Alcoholicas": ;break;
-                    case "Cereales y Legumbres": ;break;
-                    case "Dulces y Golosinas": ;break;
-                    case "Platos Precocinados": ;break;
-                    case "Salsas y Especias": ;break;
+                    case "Bebidas": ImagenSeleccion = R.drawable.bebidas_normales ;break;
+                    case "Bebidas Alcoholicas": ImagenSeleccion = R.drawable.precocinados; break;
+                    case "Cereales y Legumbres":ImagenSeleccion = R.drawable.plato; break;
+                    case "Dulces y Golosinas": ImagenSeleccion = R.drawable.precocinados; break;
+                    case "Platos Precocinados":ImagenSeleccion = R.drawable.precocinados; break;
+                    case "Salsas y Especias":ImagenSeleccion = R.drawable.especias; break;
                 }
-
             }
-
+            
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                btAceptar.setEnabled(false);
+                Toast.makeText(getActivity(), "Seleccione un tipo de alimento", Toast.LENGTH_SHORT).show();
             }
         });
 
-        seleccion();
+          seleccion(tipoAccion);
 
+          btAceptar.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+
+
+                  String nombre = newNombre.getText().toString();
+                  String info = newInfo.getText().toString();
+                  String descripcion = newDescripcion.getText().toString();
+
+                  Action action = new Action();
+
+                  action.execute(
+                          nombre,
+                          info,
+                          descripcion,
+                          usuario
+                  );
+
+              }
+          });
 
         return vista;
     }
 
-    private void seleccion() {
-        switch (action){
-            case "añadir":
-                newID.setVisibility(View.INVISIBLE);
-                txtID.setVisibility(View.INVISIBLE);
-            break;
-            case "eliminar":
-                spinner.setVisibility(View.INVISIBLE);
-                txtSpinner.setVisibility(View.INVISIBLE);
-                break;
+    private void seleccion(int tipoAccion) {
+        switch(tipoAccion){
+            //Case 1, añadir alimento
+            case 1:
+                getActivity().setTitle("Añadir Alimento");
 
-            case "": ;break;
+                break;
+            case 2:
+
+
+                break;
         }
 
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -197,6 +241,81 @@ public class menu_creacion extends Fragment{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
+    private class Action extends AsyncTask<String,Integer,Boolean> {
+
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            switch (tipoAccion){
+                case 1:
+                    //AÑADIR
+                    resul = añadir(resul, httpClient, params);
+                    break;
+                case 2:
+
+                    break;
+
+            }
+
+
+            return resul;
+        }
+
+
+        private boolean añadir(boolean resul, HttpClient httpClient, String[] params) {
+
+            HttpPost post = new HttpPost("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento");
+            post.setHeader("content-type", "application/json");
+
+            try
+            {
+                //Construimos el objeto cliente en formato JSON
+                JSONObject dato = new JSONObject();
+
+
+                dato.put("nombre", params[0]);
+                dato.put("info", params[1]);
+                dato.put("descripcion", params[2]);
+                dato.put("icono", ImagenSeleccion);
+                dato.put("imagen", ImagenSeleccion);
+                dato.put("upvotes", 0);
+                dato.put("downvotes", 0);
+                dato.put("favorito", null);
+                dato.put("usuario", params[3]);
+
+
+
+                StringEntity entity = new StringEntity(dato.toString());
+                post.setEntity(entity);
+
+                HttpResponse resp = httpClient.execute(post);
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                if(!respStr.equals("true"))
+                    resul = false;
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+            return resul;
+        }
+
+        @SuppressLint("RestrictedApi")
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+                Toast.makeText(getApplicationContext(), "INSERTADO NUEVO ELEMENTO", Toast.LENGTH_SHORT).show();
+            }
+        }
+}
 
 
 }

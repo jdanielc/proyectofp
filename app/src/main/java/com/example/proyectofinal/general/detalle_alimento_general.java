@@ -1,12 +1,16 @@
 package com.example.proyectofinal.general;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -30,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -49,7 +54,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
  * Use the {@link detalle_alimento_general#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class detalle_alimento_general extends Fragment implements IComunicaFragments {
+public class detalle_alimento_general extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -70,6 +75,8 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
     ImageView idIconoFav;
 
     Bundle objetoAlimento;
+
+    boolean sonMisAlimentos;
 
     public detalle_alimento_general() {
         // Required empty public constructor
@@ -120,8 +127,6 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
             public void onClick(View v) {
 
 
-                alimentoVo.setFavorito(!alimentoVo.isFavorito());
-
                 Actualizar();
 
                 //getFragmentManager().popBackStack();
@@ -139,7 +144,11 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
             alimentoVo = (com.example.proyectofinal.general.alimentoVo) objetoAlimento.getSerializable("objeto");
             imageDetalle.setImageResource(alimentoVo.getImagenDetalle());
             txtDetalle.setText(alimentoVo.getDescripcion());
+
+            sonMisAlimentos = objetoAlimento.getBoolean("feed");
         }
+
+        setHasOptionsMenu(true);
 
         return vista;
     }
@@ -168,26 +177,7 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
         mListener = null;
     }
 
-    @Override
-    public void enviarAlimento(alimentoVo alimentoVo) {
-        //
-    }
 
-    @Override
-    public void tipoAccion(String action) {
-       menu_creacion = new menu_creacion();
-
-        Bundle bundleEnvio = new Bundle();
-
-
-        //AQUI SE PONE EL TIPO DE ACCION A REALIZAR
-        bundleEnvio.putSerializable("accion", "");
-
-        menu_creacion.setArguments(bundleEnvio);
-
-       // MainActivity main = new MainActivity();
-       // main.changeScene(menu_creacion);
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -207,15 +197,20 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.findItem(R.id.idBuscar).setVisible(false);
+        menu.clear();
+        inflater.inflate(R.menu.main, menu);
 
-        MenuItem añadir = menu.findItem(R.id.idMenuAñadir);
+        menu.findItem(R.id.idBuscar).setVisible(false);
         MenuItem mod = menu.findItem(R.id.idMenuModificar);
         MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
 
-        añadir.setVisible(true);
-        mod.setVisible(true);
-        eliminar.setVisible(true);
+        if(sonMisAlimentos){
+
+        }else{
+            mod.setVisible(false);
+            eliminar.setVisible(false);
+        }
+
     }
 
     @Override
@@ -231,15 +226,23 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
         MainActivity mainActivity = ((MainActivity)getActivity());
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.idMenuAñadir) {
-
-            fragment = new menu_creacion();
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.fragment_detalle_alimento_general, fragment).commit();
+        if (id == R.id.idMenuModificar) {
+            abrirformulario(2);
 
 
-            return true;
+
+        }else if(id == R.id.idMenuEliminar){
+
+        //En caso de que se seleccione eliminar, llamo a la clase para eliminar y vuelvo al fragment anterior
+        Eliminar eliminar = new Eliminar();
+
+        eliminar.execute();
+
+        //con esto vuelvo al fragment anterior
+         getFragmentManager().popBackStack();
+
         }
+
 
 
 
@@ -247,25 +250,28 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
         return super.onOptionsItemSelected(item);
     }
 
+    private void abrirformulario(int tipo) {
 
-    public void Downvote(View view){
-        int preDown = alimentoVo.getDownvotes();
-        preDown++;
-        alimentoVo.setDownvotes(preDown);
+        menu_creacion menu_creacion1 = new menu_creacion();
+
+        //Usamos el Bundle para pasar el tipo de accion a realizar
+        Bundle bundle = new Bundle();
+
+        bundle.putInt("tipo",tipo);
+        bundle.putSerializable("alimento", alimentoVo);
+
+        menu_creacion1.setArguments(bundle);
+        //En caso de que se pulse el boton
+
+        getActivity().getSupportFragmentManager().beginTransaction().
+                replace(R.id.fragment_detalle_alimento_general, menu_creacion1).addToBackStack(null).commit();
     }
 
-    public void Upvote(View view){
-        int preDown = alimentoVo.getUpvotes();
-        preDown++;
-        alimentoVo.setUpvotes(preDown);
 
-    }
 
 
     //Llama al metodo de actualizado de la base de datos
     public void Actualizar(){
-
-
 
         String usuario = objetoAlimento.getSerializable("usuario").toString();
         String alimento = alimentoVo.getID()+"";
@@ -277,11 +283,48 @@ public class detalle_alimento_general extends Fragment implements IComunicaFragm
                 alimento
         );
 
-
-
     }
 
+    private class Eliminar extends AsyncTask<String,Integer,Boolean> {
 
+        protected Boolean doInBackground(String... params) {
 
+            boolean resul = true;
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            int id = alimentoVo.getID();
+
+            HttpDelete del =
+                    new HttpDelete("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento/" + id);
+
+            del.setHeader("content-type", "application/json");
+
+            try
+            {
+                HttpResponse resp = httpClient.execute(del);
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                if(!respStr.equals("true"))
+                    resul = false;
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+
+                Toast.makeText(getContext(), "ELEMENTO ELIMINADO", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 }

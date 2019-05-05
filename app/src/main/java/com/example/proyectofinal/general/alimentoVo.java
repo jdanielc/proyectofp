@@ -68,14 +68,6 @@ public class alimentoVo implements Serializable {
         this.imagenDetalle = imagenDetalle;
     }
 
-    public boolean isFavorito() {
-        return favorito;
-    }
-
-    public void setFavorito(boolean favorito) {
-        this.favorito = favorito;
-    }
-
 
     public int getID() {
         return ID;
@@ -94,9 +86,8 @@ public class alimentoVo implements Serializable {
     private int downvotes;
     private String user;
     private int imagenDetalle;
-    private boolean favorito;
 
-    public alimentoVo(int ID, String nombre, String info, int imagenId, String descripcion, int upvotes, int downvotes, String user, int imagenDetalle, boolean favorito){
+    public alimentoVo(int ID, String nombre, String info, int imagenId, String descripcion, int upvotes, int downvotes, String user, int imagenDetalle){
         this.nombre = nombre;
         this.info = info;
         this.imagenId = imagenId;
@@ -106,6 +97,5 @@ public class alimentoVo implements Serializable {
         this.downvotes = downvotes;
         this.user = user;
         this.imagenDetalle = imagenDetalle;
-        this.favorito = favorito;
     }
 }

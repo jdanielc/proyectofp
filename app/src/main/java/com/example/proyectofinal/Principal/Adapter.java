@@ -59,6 +59,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder> im
     }
 
 
+
     public class AlimentoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView txtNombre,txtInformacion;
         ImageView foto;

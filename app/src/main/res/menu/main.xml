@@ -10,11 +10,7 @@
         />
 
     <group android:id="@+id/grupoMod">
-    <item
-        android:id="@+id/idMenuAñadir"
-        android:orderInCategory="100"
-        android:title="Añadir"
-        app:showAsAction="never" />
+
     <item
         android:id="@+id/idMenuModificar"
         android:orderInCategory="100"

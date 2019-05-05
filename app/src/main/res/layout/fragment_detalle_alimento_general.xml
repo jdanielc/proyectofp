@@ -10,16 +10,29 @@
     <ImageView
         android:id="@+id/imgenDetalleId"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         android:src="@drawable/plato"
         android:scaleType="fitXY"
         android:layout_marginBottom="10dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Descripcion"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/descripcionDetalleId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Descripcion"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="27dp"
+        android:background="?android:attr/listDivider"
+        android:visibility="visible" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,20 +48,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="downvote"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Favoritos"/>
+
         <ImageButton
             android:id="@+id/idIconoFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_nofav"
-
+            android:layout_marginLeft="10dp"
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favoritos"/>
+
+
     </LinearLayout>
+
 </LinearLayout>
