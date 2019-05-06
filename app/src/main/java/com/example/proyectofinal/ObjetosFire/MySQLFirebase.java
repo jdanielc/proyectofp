@@ -49,7 +49,6 @@ public  class MySQLFirebase {
                 //Construimos el objeto cliente en formato JSON
                 JSONObject dato = new JSONObject();
 
-                //dato.put("Id", Integer.parseInt(txtId.getText().toString()));
 
                 dato.put("ID", params[0]);
                 dato.put("nickname", params[1]);

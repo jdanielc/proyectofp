@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
 import com.example.proyectofinal.Principal.IComunicaFragments;
+import com.example.proyectofinal.general.Utilidades;
 import com.example.proyectofinal.general.alimentoVo;
 
 import org.apache.http.HttpResponse;
@@ -180,6 +181,11 @@ public class menu_creacion extends Fragment{
                           usuario
                   );
 
+                  Utilidades.waitingServer(getContext());
+
+                  //con esto vuelvo al fragment anterior
+                  getFragmentManager().popBackStack();
+
               }
           });
 
@@ -251,7 +257,7 @@ public class menu_creacion extends Fragment{
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            switch (tipoAccion){
+            switch (tipoAccion) {
                 case 1:
                     //AÑADIR
                     resul = añadir(resul, httpClient, params);
@@ -272,8 +278,7 @@ public class menu_creacion extends Fragment{
             HttpPost post = new HttpPost("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento");
             post.setHeader("content-type", "application/json");
 
-            try
-            {
+            try {
                 //Construimos el objeto cliente en formato JSON
                 JSONObject dato = new JSONObject();
 
@@ -289,19 +294,16 @@ public class menu_creacion extends Fragment{
                 dato.put("usuario", params[3]);
 
 
-
                 StringEntity entity = new StringEntity(dato.toString());
                 post.setEntity(entity);
 
                 HttpResponse resp = httpClient.execute(post);
                 String respStr = EntityUtils.toString(resp.getEntity());
 
-                if(!respStr.equals("true"))
-                    resul = false;
-            }
-            catch(Exception ex)
-            {
-                Log.e("ServicioRest","Error!", ex);
+               /* if (!respStr.equals("true"))
+                resul = false;*/
+            } catch (Exception ex) {
+                Log.e("ServicioRest", "Error!", ex);
                 resul = false;
             }
             return resul;
@@ -310,12 +312,10 @@ public class menu_creacion extends Fragment{
         @SuppressLint("RestrictedApi")
         protected void onPostExecute(Boolean result) {
 
-            if (result)
-            {
-                Toast.makeText(getApplicationContext(), "INSERTADO NUEVO ELEMENTO", Toast.LENGTH_SHORT).show();
+            if (result) {
             }
         }
-}
 
 
+    }
 }

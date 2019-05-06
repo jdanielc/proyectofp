@@ -127,6 +127,8 @@ public class FragmentInicial extends Fragment {
 
         recyclerInicial.setAdapter(adapterInicio);
 
+        getActivity().setTitle("Inicio");
+
         return vista;
     }
 

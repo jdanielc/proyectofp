@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,9 +75,14 @@ public class detalle_alimento_general extends Fragment{
     alimentoVo alimentoVo = null;
     ImageView idIconoFav;
 
+    Button btLike;
+    Button btDislike;
+
     Bundle objetoAlimento;
 
     boolean sonMisAlimentos;
+    String nombreAlimento;
+    String usuario;
 
     public detalle_alimento_general() {
         // Required empty public constructor
@@ -117,9 +123,14 @@ public class detalle_alimento_general extends Fragment{
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_detalle_alimento_general, container, false);
 
+
+
         txtDetalle = vista.findViewById(R.id.descripcionDetalleId);
         imageDetalle = vista.findViewById(R.id.imgenDetalleId);
         idIconoFav = vista.findViewById(R.id.idIconoFav);
+        btLike = vista.findViewById(R.id.btUpvote);
+        btDislike = vista.findViewById(R.id.btDownvote);
+
 
         //OnClick para favoritos
         idIconoFav.setOnClickListener(new View.OnClickListener() {
@@ -129,26 +140,25 @@ public class detalle_alimento_general extends Fragment{
 
                 Actualizar();
 
-                //getFragmentManager().popBackStack();
-
             }
         });
 
         objetoAlimento = getArguments();
 
-
-
-
         //si hay contenido en el bundle lo volcamos al objeto alimentoVo
         if(objetoAlimento != null){
-            alimentoVo = (com.example.proyectofinal.general.alimentoVo) objetoAlimento.getSerializable("objeto");
+            alimentoVo = (alimentoVo) objetoAlimento.getSerializable("objeto");
             imageDetalle.setImageResource(alimentoVo.getImagenDetalle());
             txtDetalle.setText(alimentoVo.getDescripcion());
-
             sonMisAlimentos = objetoAlimento.getBoolean("feed");
         }
 
         setHasOptionsMenu(true);
+
+        //Cambio el titulo a la actividad e inicializo las opciones necesarios para el borrado en caso de ser necesario
+        nombreAlimento= alimentoVo.getNombre();
+        getActivity().setTitle(nombreAlimento);
+        usuario = alimentoVo.getUser();
 
         return vista;
     }
@@ -205,6 +215,8 @@ public class detalle_alimento_general extends Fragment{
         MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
 
         if(sonMisAlimentos){
+            btDislike.setVisibility(View.INVISIBLE);
+            btLike.setVisibility(View.INVISIBLE);
 
         }else{
             mod.setVisible(false);
@@ -236,15 +248,15 @@ public class detalle_alimento_general extends Fragment{
         //En caso de que se seleccione eliminar, llamo a la clase para eliminar y vuelvo al fragment anterior
         Eliminar eliminar = new Eliminar();
 
+
         eliminar.execute();
 
-        //con esto vuelvo al fragment anterior
+        Utilidades.waitingServer(getContext());
+
+         //con esto vuelvo al fragment anterior
          getFragmentManager().popBackStack();
 
         }
-
-
-
 
 
         return super.onOptionsItemSelected(item);
@@ -287,26 +299,36 @@ public class detalle_alimento_general extends Fragment{
 
     private class Eliminar extends AsyncTask<String,Integer,Boolean> {
 
+
         protected Boolean doInBackground(String... params) {
 
             boolean resul = true;
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            int id = alimentoVo.getID();
 
-            HttpDelete del =
-                    new HttpDelete("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento/" + id);
+            HttpPut del =
+                    new HttpPut("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/delalimento");
 
             del.setHeader("content-type", "application/json");
 
             try
             {
+                JSONObject dato = new JSONObject();
+
+                dato.put("usuario", usuario);
+                dato.put("alimento", nombreAlimento);
+
+
+                StringEntity entity = new StringEntity(dato.toString());
+                del.setEntity(entity);
+
                 HttpResponse resp = httpClient.execute(del);
                 String respStr = EntityUtils.toString(resp.getEntity());
 
-                if(!respStr.equals("true"))
-                    resul = false;
+
+               /* if(!respStr.equals("true"))
+                    resul = false;*/
             }
             catch(Exception ex)
             {
@@ -319,10 +341,9 @@ public class detalle_alimento_general extends Fragment{
 
         protected void onPostExecute(Boolean result) {
 
-            if (result)
+            if (result == true)
             {
 
-                Toast.makeText(getContext(), "ELEMENTO ELIMINADO", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -236,11 +236,5 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    public void changeScene(Fragment fragment, int out) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(out, fragment).addToBackStack(null)
-                .commit();
-    }
-
 }
 

@@ -28,6 +28,7 @@ import com.example.proyectofinal.ObjetosFire.ControlFavoritos;
 import com.example.proyectofinal.Principal.Adapter;
 import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.general.Modelo;
+import com.example.proyectofinal.general.Utilidades;
 import com.example.proyectofinal.general.alimentoVo;
 import com.example.proyectofinal.general.detalle_alimento_general;
 import com.google.firebase.auth.FirebaseAuth;
@@ -118,6 +119,11 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
         //
         View vista = inflater.inflate(R.layout.fragment_fragment_alimentos_principal, container, false);
 
+        //SI NO ES LA PRIMEAVEZ QUE SE CARGA EL FRAGMENT HACEMOS ESPERAR DURANTE UN SEGUNDO
+        if(savedInstanceState != null){
+            Utilidades.waitingServer(getContext());
+        }
+
         //ASIGNO EL RECYCLERVIEW Y EL ARRAYLIST
         listaAlimentos = new ArrayList<>();
         recyclerView = (RecyclerView) vista.findViewById(R.id.recyclerAlimentosId);
@@ -176,13 +182,45 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             @Override
             public void onClick(View v) {
 
-                interfaceComunicaFragments.enviarAlimento(listaAlimentos.get(recyclerView.getChildAdapterPosition(v)), sonMisAlimentos);
+                Bundle bundleEnvio = new Bundle();
+
+                alimentoVo alimento = listaAlimentos.get(recyclerView.getChildAdapterPosition(v));
+
+                bundleEnvio.putSerializable("objeto", alimento);
+
+                bundleEnvio.putSerializable("usuario", usuario);
+
+
+                //Este boleano nos indicara si se carga el recycler desde el feed o el de mis alimentos
+                //Lo usaremos para saber si ocultar o no el menu
+                if(sonMisAlimentos){
+                    bundleEnvio.putBoolean("feed", true);
+                }else{
+                    bundleEnvio.putBoolean("feed", false);
+
+                }
+
+                detalle_alimento_general detalle = new detalle_alimento_general();
+
+                detalle.setArguments(bundleEnvio);
+
+                //cargar el fragment en el activity
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_main, detalle).addToBackStack(null)
+                        .commit();
 
             }
         });
 
 
         setHasOptionsMenu(true);
+
+        if(sonMisAlimentos){
+            getActivity().setTitle("Mis Alimentos");
+        }else{
+            getActivity().setTitle("Forum");
+        }
 
         return vista;
     }
@@ -327,8 +365,8 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                     String usuario= mensaje.getString("usuario");
 
 
-                    alimentoVo elemento = new alimentoVo(id, nombre, info, R.drawable.plato,descripcion, upvotes, downvotes,
-                            usuario, R.drawable.plato);
+                    alimentoVo elemento = new alimentoVo(id, nombre, info, icono ,descripcion, upvotes, downvotes,
+                            usuario, imagen);
 
                     listaAlimentos.add(elemento);
                 }
