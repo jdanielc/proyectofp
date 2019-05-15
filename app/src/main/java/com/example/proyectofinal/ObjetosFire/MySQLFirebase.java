@@ -41,7 +41,7 @@ public  class MySQLFirebase {
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost post = new HttpPost("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/newusuario");
+            HttpPost post = new HttpPost("http://damnation.ddns.net/phpRestPFG/public/index.php/api/newusuario");
             post.setHeader("content-type", "application/json");
 
             try
@@ -118,7 +118,7 @@ public  class MySQLFirebase {
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPut put =new HttpPut("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento/"
+            HttpPut put =new HttpPut("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/"
                     + ID);
 
 
@@ -192,7 +192,7 @@ public  class MySQLFirebase {
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpGet del =
-                    new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/allfavorito/" + params[0]);
+                    new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/allfavorito/" + params[0]);
 
             del.setHeader("content-type", "application/json");
 

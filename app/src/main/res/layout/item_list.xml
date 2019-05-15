@@ -28,11 +28,10 @@
                 android:src="@drawable/plato"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
-
                 />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@android:color/white">
@@ -41,7 +40,7 @@
                 <TextView
                     android:id="@+id/idNombre"
                     android:layout_marginTop="10dp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Nombre"
                     android:textSize="25sp"
@@ -49,15 +48,13 @@
 
                 <TextView
                     android:id="@+id/idInfo"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Descripcion "
                     android:layout_marginBottom="15dp"
                     android:layout_marginRight="10dp"/>
 
-            </LinearLayout>
-
-            <LinearLayout
+                <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -78,7 +75,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5"/>
+
             </LinearLayout>
+
+            </LinearLayout>
+
+
 
         </LinearLayout>
 

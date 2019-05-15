@@ -10,8 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.example.proyectofinal.ObjetosFire.FirebaseReferences;
 import com.example.proyectofinal.Principal.Adapter;
@@ -43,7 +47,7 @@ import java.util.ArrayList;
  * Use the {@link FragmentInicial#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentInicial extends Fragment {
+public class FragmentInicial extends Fragment implements SearchView.OnQueryTextListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -116,6 +120,7 @@ public class FragmentInicial extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_fragment_inicial, container, false);
+        setHasOptionsMenu(true);
 
         recyclerInicial = vista.findViewById(R.id.idRecyclerInicial);
         listaAlimentos = new ArrayList<>();
@@ -156,6 +161,24 @@ public class FragmentInicial extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        String userInput = newText.toLowerCase();
+        ArrayList<alimentoGeneral> newList = new ArrayList<alimentoGeneral>();
+        for(alimentoGeneral componente : listaAlimentos){
+            if(componente.getNombre().toLowerCase().contains(userInput) || componente.getInfo().toLowerCase().contains(userInput)){
+                newList.add(componente);
+            }
+        }
+        adapterInicio.updateList(newList);
+        return true;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -182,7 +205,7 @@ public class FragmentInicial extends Fragment {
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpGet del =
-                    new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/inicial");
+                    new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/inicial");
 
             del.setHeader("content-type", "application/json");
 
@@ -241,8 +264,25 @@ public class FragmentInicial extends Fragment {
 
     }
 
-    //EN CASO DE FAVORITO
-    public void fav(View view){
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.main, menu);
+
+
+        MenuItem mod = menu.findItem(R.id.idMenuModificar);
+        MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
+
+
+        mod.setVisible(false);
+        eliminar.setVisible(false);
+
+        MenuItem menuItem = menu.findItem(R.id.idBuscar);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
 
     }
+
+
 }

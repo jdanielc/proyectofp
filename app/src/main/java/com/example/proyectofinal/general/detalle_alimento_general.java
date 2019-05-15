@@ -308,7 +308,7 @@ public class detalle_alimento_general extends Fragment{
 
 
             HttpPut del =
-                    new HttpPut("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/delalimento");
+                    new HttpPut("http://damnation.ddns.net/phpRestPFG/public/index.php/api/delalimento");
 
             del.setHeader("content-type", "application/json");
 

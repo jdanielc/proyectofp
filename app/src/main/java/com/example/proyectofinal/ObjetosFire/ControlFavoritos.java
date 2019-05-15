@@ -36,7 +36,7 @@ public class ControlFavoritos {
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost post = new HttpPost("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/masfav");
+            HttpPost post = new HttpPost("http://damnation.ddns.net/phpRestPFG/public/index.php/api/masfav");
             post.setHeader("content-type", "application/json");
 
             try
@@ -99,7 +99,7 @@ public class ControlFavoritos {
 
 
             HttpPut del =
-                    new HttpPut("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/menosfav");
+                    new HttpPut("http://damnation.ddns.net/phpRestPFG/public/index.php/api/menosfav");
 
             del.setHeader("content-type", "application/json");
 
@@ -166,7 +166,7 @@ public class ControlFavoritos {
 
 
             HttpDelete del =
-                    new HttpDelete("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/menosfav/" + id);
+                    new HttpDelete("http://damnation.ddns.net/phpRestPFG/public/index.php/api/menosfav/" + id);
 
             del.setHeader("content-type", "application/json");
 

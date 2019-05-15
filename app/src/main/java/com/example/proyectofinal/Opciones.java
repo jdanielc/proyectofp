@@ -115,6 +115,8 @@ public class Opciones extends Fragment {
             }
         });
 
+        getActivity().setTitle("Opciones");
+
         return vista;
 
     }

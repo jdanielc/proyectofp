@@ -333,10 +333,10 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             HttpGet del = null;
 
             if(AlimentosListar){
-                del = new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento/" + usuario);
+                del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/" + usuario);
 
             }else {
-                del = new HttpGet("https://dam2.ieslamarisma.net/2019/juandcepeda/phpRestPFG/public/index.php/api/alimento");
+                del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento");
 
             }
 

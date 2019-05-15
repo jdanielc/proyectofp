@@ -26,6 +26,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder> im
     @Override
     public AlimentoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list,null,false);
+        RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        view.setLayoutParams(lp);
         return new AlimentoViewHolder(view);
     }
 
