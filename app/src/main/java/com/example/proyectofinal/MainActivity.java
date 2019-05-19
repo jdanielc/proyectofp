@@ -63,12 +63,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        //CARGA EL FRAGMENT AL INICIAR LA APLICACIÓN
-        FragmentTransaction transaction = ((MainActivity) this).getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_main, new FragmentInicial(), "fragment_preguntas");
-        transaction.commit();
 
-        // getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new FragmentInicial()).commit();
+
+
+
 
 
         //AUTENTIFICACIÓN
@@ -81,6 +79,11 @@ public class MainActivity extends AppCompatActivity
 
 
         showSignInOption();
+
+        //CARGA EL FRAGMENT AL INICIAR LA APLICACIÓN
+        FragmentTransaction transaction = ((MainActivity) this).getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_main, new FragmentInicial(),"fragment_preguntas");
+        transaction.commit();
 
     }
 
@@ -160,28 +163,38 @@ public class MainActivity extends AppCompatActivity
 
 
         if (id == R.id.nav_camera) {
-            fragment = new FragmentInicial();
+            fragment = new FragmentAlimentosPrincipal();
+            bundle.putString("usuario", usuario);
+            bundle.putInt("tipo", 1);
+
             fragmentSeleccionado = true;
 
         }
         //ASIGNO LOS FRAGMENT SELECCIONADOS Y LE PASO AL FRAGMENT A TRAVES DE UN BUNDLE QUE HA DE MOSTRAR
         //TRUE MOSTRARA TODOS LOS ALIMENTOS, FALSE SOLO MOSTRARA LOS DEL USUARIO CONECTADO
+
         else if (id == R.id.nav_gallery) {
-            fragment = new FragmentAlimentosPrincipal();
-
-            bundle.putBoolean("mis", false);
-
-            fragment.setArguments(bundle);
+           fragment = new FragmentInicial();
             fragmentSeleccionado = true;
 
         } else if (id == R.id.nav_slideshow) {
             fragment = new FragmentAlimentosPrincipal();
-            bundle.putBoolean("mis", true);
-            bundle.putString("usuario", usuario);
+           /* bundle.putBoolean("mis", true);
+            bundle.putString("usuario", usuario);*/
 
-            fragment.setArguments(bundle);
+            bundle.putString("usuario", usuario);
+            bundle.putInt("tipo", 2);
+
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_manage) {
+            fragment = new FragmentAlimentosPrincipal();
+           /* bundle.putBoolean("mis", false);
+            bundle.putString("usuario", usuario);
+            bundle.putBoolean("fav", true);*/
+            bundle.putString("usuario", usuario);
+            bundle.putInt("tipo", 3);
+
+            fragmentSeleccionado = true;
 
         } else if (id == R.id.nav_share) {
 
@@ -190,6 +203,7 @@ public class MainActivity extends AppCompatActivity
             fragmentSeleccionado = true;
         }
 
+        fragment.setArguments(bundle);
 
         //SI SE HA SELECCIONADO UN FRAGMENTO, ESTE SE CARGA
         if (fragmentSeleccionado) {
@@ -235,6 +249,7 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.content_main, detalle_alimento_general).addToBackStack(null)
                 .commit();
     }
+
 
 }
 

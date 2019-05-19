@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.proyectofinal.ObjetosFire.ControlFavoritos;
+import com.example.proyectofinal.ObjetosFire.FirebaseReferences;
 import com.example.proyectofinal.Principal.Adapter;
 import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.general.Modelo;
@@ -33,6 +35,11 @@ import com.example.proyectofinal.general.alimentoVo;
 import com.example.proyectofinal.general.detalle_alimento_general;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -44,6 +51,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
@@ -118,110 +126,115 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
         // Inflate the layout for this fragment
         //
         View vista = inflater.inflate(R.layout.fragment_fragment_alimentos_principal, container, false);
-
-        //SI NO ES LA PRIMEAVEZ QUE SE CARGA EL FRAGMENT HACEMOS ESPERAR DURANTE UN SEGUNDO
-        if(savedInstanceState != null){
-            Utilidades.waitingServer(getContext());
-        }
-
-        //ASIGNO EL RECYCLERVIEW Y EL ARRAYLIST
-        listaAlimentos = new ArrayList<>();
-        recyclerView = (RecyclerView) vista.findViewById(R.id.recyclerAlimentosId);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        //LLAMO A LA CLASE QUE LLENA EL ARRAYLIST, Y OBTENGO EL BOOLEAN QUE ME INDICA QUE DATOS CARGAR
-        boolean AlimentosSeleccionados = getArguments().getBoolean("mis");
-
-        //SI SE HA SOLICITA LOS ALIMENTOS DEL USUARIO ACTUAL, TOMAMOS DEL BUNDLE EL USUARIO
-
         btNuevo = vista.findViewById(R.id.fab);
 
-        if(AlimentosSeleccionados){
-            usuario = getArguments().getString("usuario");
+        try {
+            //SI NO ES LA PRIMEAVEZ QUE SE CARGA EL FRAGMENT HACEMOS ESPERAR DURANTE UN SEGUNDO
+            if (savedInstanceState != null) {
+                Utilidades.waitingServer(getContext());
+            }
 
-            btNuevo.setVisibility(View.VISIBLE);
-            btNuevo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    menu_creacion menu_creacion1 = new menu_creacion();
+            //ASIGNO EL RECYCLERVIEW Y EL ARRAYLIST
+            listaAlimentos = new ArrayList<>();
+            recyclerView = (RecyclerView) vista.findViewById(R.id.recyclerAlimentosId);
 
-                    //Usamos el Bundle para pasar el tipo de accion a realizar
-                    Bundle bundle = new Bundle();
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-                    bundle.putInt("tipo",1);
-                    bundle.putString("usuario",usuario);
+            //LLAMO A LA CLASE QUE LLENA EL ARRAYLIST, Y OBTENGO EL BOOLEAN QUE ME INDICA QUE DATOS CARGAR
+            int AlimentosSeleccionados = 0;
+            if (getArguments() != null) {
+                AlimentosSeleccionados = getArguments().getInt("tipo");
+                usuario = getArguments().getString("usuario");
 
-                    menu_creacion1.setArguments(bundle);
-                    //En caso de que se pulse el boton
+            }
+
+            //SI SE HA SOLICITA LOS ALIMENTOS DEL USUARIO ACTUAL, TOMAMOS DEL BUNDLE EL USUARIO
+            if(AlimentosSeleccionados == 1 || AlimentosSeleccionados == 3 || AlimentosSeleccionados == 0){
+                btNuevo.setVisibility(View.INVISIBLE);
+
+                sonMisAlimentos = false;
+            }
+            else if (AlimentosSeleccionados == 2) {
+
+                btNuevo.setVisibility(View.VISIBLE);
+                btNuevo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        menu_creacion menu_creacion1 = new menu_creacion();
+
+                        //Usamos el Bundle para pasar el tipo de accion a realizar
+                        Bundle bundle = new Bundle();
+
+                        bundle.putInt("tipo", 1);
+                        bundle.putString("usuario", usuario);
+
+                        menu_creacion1.setArguments(bundle);
+                        //En caso de que se pulse el boton
 
                         getActivity().getSupportFragmentManager().beginTransaction().
                                 replace(R.id.fragment_alimentos_principal, menu_creacion1).addToBackStack(null).commit();
 
-                         btNuevo.setVisibility(View.INVISIBLE);
+                        btNuevo.setVisibility(View.INVISIBLE);
+
+                    }
+                });
+
+                sonMisAlimentos = true;
+            }
+
+            new Listar(AlimentosSeleccionados).execute();
+
+            adapter = new Adapter(listaAlimentos);
+            recyclerView.setAdapter(adapter);
+
+
+            adapter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Bundle bundleEnvio = new Bundle();
+
+                    alimentoVo alimento = listaAlimentos.get(recyclerView.getChildAdapterPosition(v));
+
+                    bundleEnvio.putSerializable("objeto", alimento);
+
+                    bundleEnvio.putSerializable("usuario", usuario);
+
+
+                    //Este boleano nos indicara si se carga el recycler desde el feed o el de mis alimentos
+                    //Lo usaremos para saber si ocultar o no el menu
+                    if (sonMisAlimentos) {
+                        bundleEnvio.putBoolean("feed", true);
+                    } else {
+                        bundleEnvio.putBoolean("feed", false);
+
+                    }
+
+                    detalle_alimento_general detalle = new detalle_alimento_general();
+
+                    detalle.setArguments(bundleEnvio);
+
+                    //cargar el fragment en el activity
+
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.content_main, detalle).addToBackStack(null)
+                            .commit();
 
                 }
             });
 
-            sonMisAlimentos = true;
-        }else{
-                btNuevo.setVisibility(View.INVISIBLE);
 
+            setHasOptionsMenu(true);
 
-            sonMisAlimentos = false;
-
-        }
-
-        new Listar(AlimentosSeleccionados).execute();
-
-        adapter = new Adapter(listaAlimentos);
-        recyclerView.setAdapter(adapter);
-
-
-        adapter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Bundle bundleEnvio = new Bundle();
-
-                alimentoVo alimento = listaAlimentos.get(recyclerView.getChildAdapterPosition(v));
-
-                bundleEnvio.putSerializable("objeto", alimento);
-
-                bundleEnvio.putSerializable("usuario", usuario);
-
-
-                //Este boleano nos indicara si se carga el recycler desde el feed o el de mis alimentos
-                //Lo usaremos para saber si ocultar o no el menu
-                if(sonMisAlimentos){
-                    bundleEnvio.putBoolean("feed", true);
-                }else{
-                    bundleEnvio.putBoolean("feed", false);
-
-                }
-
-                detalle_alimento_general detalle = new detalle_alimento_general();
-
-                detalle.setArguments(bundleEnvio);
-
-                //cargar el fragment en el activity
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_main, detalle).addToBackStack(null)
-                        .commit();
-
+            if (sonMisAlimentos) {
+                getActivity().setTitle("Mis Alimentos");
+            } else {
+                getActivity().setTitle("Forum");
             }
-        });
 
-
-        setHasOptionsMenu(true);
-
-        if(sonMisAlimentos){
-            getActivity().setTitle("Mis Alimentos");
-        }else{
-            getActivity().setTitle("Forum");
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
         return vista;
     }
 
@@ -316,9 +329,10 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
 
     private class Listar extends AsyncTask<String,Integer,Boolean> {
 
-        boolean AlimentosListar;
+        int AlimentosListar;
 
-        public Listar(boolean AlimentosListar){
+
+        public Listar(int AlimentosListar){
             this.AlimentosListar = AlimentosListar;
         }
 
@@ -332,17 +346,35 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet del = null;
 
-            if(AlimentosListar){
-                del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/" + usuario);
+            switch (AlimentosListar){
+                case 1 & 0:
+                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento");
+                    resul = HttpGet(resul, httpClient, del);
 
-            }else {
-                del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento");
+                    break;
+                case 2:
+                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/" + usuario);
+                    resul = HttpGet(resul, httpClient, del);
 
+                    break;
+                case 3:
+                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/" + usuario);
+                    resul = HttpGet(resul, httpClient, del);
+                    fragmentFavoritos(httpClient);
+
+                    break;
+                    default:
+                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento");
+                    resul = HttpGet(resul, httpClient, del);
+                        break;
             }
 
+            return resul;
+        }
+
+        private boolean HttpGet(boolean resul, HttpClient httpClient, HttpGet del) {
             try
             {
-
                 del.setHeader("content-type", "application/json");
 
                 HttpResponse resp = httpClient.execute(del);
@@ -377,19 +409,64 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                 Log.e("ServicioRest","Error!", ex);
                 resul = false;
             }
-
             return resul;
+        }
+
+        private void fragmentFavoritos(HttpClient httpClient) {
+            ArrayList<Integer> listaID = new ArrayList<>();
+            ArrayList<alimentoVo> listaFavoritos = new ArrayList<>();
+
+            HttpGet del =
+                    new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/allfavorito/" + usuario);
+
+            del.setHeader("content-type", "application/json");
+
+            try
+            {
+                HttpResponse resp = httpClient.execute(del);
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                JSONArray mensajes = new JSONArray(respStr);
+
+                /*Tomo todos los IDs de los alimentos de la tabla de favoritos correspondiente a el usuario actual*/
+                for(int i =0; i<mensajes.length(); i++){
+
+                    JSONObject mensaje = mensajes.getJSONObject(i);
+
+                    listaID.add(mensaje.getInt("alimento"));
+
+                }
+
+                /*Tomo los alimentos de la lista de alimentos cuyos IDs coinciden con los IDs de alimentos favoritos
+                * y los almaceno en un ArrayList aparte*/
+                for (alimentoVo alimento:
+                     listaAlimentos) {
+                    if(listaID.contains(alimento.getID())){
+                        listaFavoritos.add(alimento);
+                    }
+                }
+
+                //Vacio la lista de alimentos y la relleno con los alimentos guardados aparte anteriormente
+                listaAlimentos.clear();
+                listaAlimentos = listaFavoritos;
+
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+
+            }
         }
 
         protected void onPostExecute(Boolean result) {
 
             if (result)
             {
-                //Rellenamos la lista con los nombres de los clientes
                 //Rellenamos la lista con los resultados
                 adapter.updateList(listaAlimentos);
             }
         }
-
     }
+
+
 }

@@ -184,11 +184,11 @@ public  class MySQLFirebase {
         String usuario;
         int alimento;
 
+        boolean existe = false;
 
         protected Boolean doInBackground(String... params) {
 
             boolean resul = false;
-
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpGet del =
@@ -211,14 +211,18 @@ public  class MySQLFirebase {
 
                     if(mensaje.getInt("alimento") == Integer.parseInt(params[1])){
                         resul = true;
+                        existe = true;
                         break;
                     }
 
                 }
 
+                /*Tomo los datos desde los paramentos*/
 
                 usuario = params[0];
+
                 alimento = Integer.parseInt(params[1]);
+
 
             }
             catch(Exception ex)
@@ -234,11 +238,11 @@ public  class MySQLFirebase {
 
         protected void onPostExecute(Boolean result) {
 
-            if (result)
+            if (result )
             {
             new ControlFavoritos.Eliminar(usuario, alimento).execute();
 
-            }else{
+            }else {
                 new ControlFavoritos.Insertar(usuario, alimento).execute();
             }
         }
