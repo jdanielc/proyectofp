@@ -31,13 +31,14 @@ public static class Insertar extends AsyncTask<String,Integer,Boolean> {
 
         }
 
+
         protected Boolean doInBackground(String... params) {
 
             boolean resul = true;
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost post = new HttpPost("http://damnation.ddns.net/phpRestPFG/public/index.php/api/masfav");
+            HttpPost post = new HttpPost("http://damnation.ddns.net/daniel/phpRestPFG/public/api/masfav");
             post.setHeader("content-type", "application/json");
             try
             {
@@ -94,7 +95,7 @@ public static class Insertar extends AsyncTask<String,Integer,Boolean> {
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpPut del =
-                    new HttpPut("http://damnation.ddns.net/phpRestPFG/public/index.php/api/menosfav");
+                    new HttpPut("http://damnation.ddns.net/daniel/phpRestPFG/public/api/menosfav");
 
             del.setHeader("content-type", "application/json");
 

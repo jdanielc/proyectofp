@@ -141,6 +141,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
             //LLAMO A LA CLASE QUE LLENA EL ARRAYLIST, Y OBTENGO EL BOOLEAN QUE ME INDICA QUE DATOS CARGAR
+            /**/
             int AlimentosSeleccionados = 0;
             if (getArguments() != null) {
                 AlimentosSeleccionados = getArguments().getInt("tipo");
@@ -149,10 +150,14 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             }
 
             //SI SE HA SOLICITA LOS ALIMENTOS DEL USUARIO ACTUAL, TOMAMOS DEL BUNDLE EL USUARIO
-            if(AlimentosSeleccionados == 1 || AlimentosSeleccionados == 3 || AlimentosSeleccionados == 0){
+            if(AlimentosSeleccionados == 1 || AlimentosSeleccionados == 0){
                 btNuevo.setVisibility(View.INVISIBLE);
 
                 sonMisAlimentos = false;
+            }else if( AlimentosSeleccionados == 3 ){
+                btNuevo.setVisibility(View.INVISIBLE);
+                sonMisAlimentos = false;
+
             }
             else if (AlimentosSeleccionados == 2) {
 
@@ -176,11 +181,23 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
 
                         btNuevo.setVisibility(View.INVISIBLE);
 
+
                     }
                 });
 
                 sonMisAlimentos = true;
             }
+
+            setHasOptionsMenu(true);
+
+            if (AlimentosSeleccionados == 2) {
+                getActivity().setTitle("Mis Alimentos");
+            } else if(AlimentosSeleccionados == 1){
+                getActivity().setTitle("Forum");
+            }else if(AlimentosSeleccionados == 3){
+                getActivity().setTitle("Favoritos");
+            }
+
 
             new Listar(AlimentosSeleccionados).execute();
 
@@ -223,14 +240,6 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                 }
             });
 
-
-            setHasOptionsMenu(true);
-
-            if (sonMisAlimentos) {
-                getActivity().setTitle("Mis Alimentos");
-            } else {
-                getActivity().setTitle("Forum");
-            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -347,24 +356,26 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             HttpGet del = null;
 
             switch (AlimentosListar){
-                case 1 & 0:
-                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento");
+                case 1:
+                    del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
                     resul = HttpGet(resul, httpClient, del);
 
                     break;
                 case 2:
-                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/" + usuario);
+                    del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento/" + usuario);
                     resul = HttpGet(resul, httpClient, del);
 
                     break;
                 case 3:
-                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/" + usuario);
+                    del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento/" + usuario);
                     resul = HttpGet(resul, httpClient, del);
+
+                    //Filtro los alimentos
                     fragmentFavoritos(httpClient);
 
                     break;
                     default:
-                    del = new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento");
+                    del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
                     resul = HttpGet(resul, httpClient, del);
                         break;
             }
@@ -391,13 +402,12 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                     String info = mensaje.getString("info");
                     int icono = mensaje.getInt("iconoId");
                     int upvotes = mensaje.getInt("upvotes");
-                    int downvotes= mensaje.getInt("downvotes");
                     String descripcion = mensaje.getString("descripcion");
                     int imagen = mensaje.getInt("imagenDetalle");
                     String usuario= mensaje.getString("usuario");
 
 
-                    alimentoVo elemento = new alimentoVo(id, nombre, info, icono ,descripcion, upvotes, downvotes,
+                    alimentoVo elemento = new alimentoVo(id, nombre, info, icono ,descripcion, upvotes,
                             usuario, imagen);
 
                     listaAlimentos.add(elemento);
@@ -417,7 +427,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             ArrayList<alimentoVo> listaFavoritos = new ArrayList<>();
 
             HttpGet del =
-                    new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/allfavorito/" + usuario);
+                    new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/allfavorito/" + usuario);
 
             del.setHeader("content-type", "application/json");
 

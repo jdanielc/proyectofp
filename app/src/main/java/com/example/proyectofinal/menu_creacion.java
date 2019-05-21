@@ -275,7 +275,7 @@ public class menu_creacion extends Fragment{
 
         private boolean añadir(boolean resul, HttpClient httpClient, String[] params) {
 
-            HttpPost post = new HttpPost("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento");
+            HttpPost post = new HttpPost("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
             post.setHeader("content-type", "application/json");
 
             try {
@@ -289,7 +289,6 @@ public class menu_creacion extends Fragment{
                 dato.put("icono", ImagenSeleccion);
                 dato.put("imagen", ImagenSeleccion);
                 dato.put("upvotes", 0);
-                dato.put("downvotes", 0);
                 dato.put("favorito", null);
                 dato.put("usuario", params[3]);
 

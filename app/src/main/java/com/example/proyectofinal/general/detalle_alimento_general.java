@@ -76,7 +76,6 @@ public class detalle_alimento_general extends Fragment{
     ImageView idIconoFav;
 
     Button btLike;
-    Button btDislike;
 
     Bundle objetoAlimento;
 
@@ -129,16 +128,14 @@ public class detalle_alimento_general extends Fragment{
         imageDetalle = vista.findViewById(R.id.imgenDetalleId);
         idIconoFav = vista.findViewById(R.id.idIconoFav);
         btLike = vista.findViewById(R.id.btUpvote);
-        btDislike = vista.findViewById(R.id.btDownvote);
 
 
         //OnClick para favoritos
         idIconoFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 Actualizar();
+
 
             }
         });
@@ -215,8 +212,8 @@ public class detalle_alimento_general extends Fragment{
         MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
 
         if(sonMisAlimentos){
-            btDislike.setVisibility(View.INVISIBLE);
             btLike.setVisibility(View.INVISIBLE);
+            idIconoFav.setVisibility(View.INVISIBLE);
 
         }else{
             mod.setVisible(false);
@@ -247,7 +244,6 @@ public class detalle_alimento_general extends Fragment{
 
         //En caso de que se seleccione eliminar, llamo a la clase para eliminar y vuelvo al fragment anterior
         Eliminar eliminar = new Eliminar();
-
 
         eliminar.execute();
 
@@ -288,7 +284,7 @@ public class detalle_alimento_general extends Fragment{
         String usuario = objetoAlimento.getSerializable("usuario").toString();
         String alimento = alimentoVo.getID()+"";
 
-        MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites();
+        MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites(getContext());
 
         listarAllFavorites.execute(
                 usuario,
@@ -308,7 +304,7 @@ public class detalle_alimento_general extends Fragment{
 
 
             HttpPut del =
-                    new HttpPut("http://damnation.ddns.net/phpRestPFG/public/index.php/api/delalimento");
+                    new HttpPut("http://damnation.ddns.net/daniel/phpRestPFG/public/api/delalimento");
 
             del.setHeader("content-type", "application/json");
 
@@ -326,9 +322,6 @@ public class detalle_alimento_general extends Fragment{
                 HttpResponse resp = httpClient.execute(del);
                 String respStr = EntityUtils.toString(resp.getEntity());
 
-
-               /* if(!respStr.equals("true"))
-                    resul = false;*/
             }
             catch(Exception ex)
             {

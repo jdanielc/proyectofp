@@ -1,6 +1,7 @@
 package com.example.proyectofinal.ObjetosFire;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -41,7 +42,7 @@ public  class MySQLFirebase {
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost post = new HttpPost("http://damnation.ddns.net/phpRestPFG/public/index.php/api/newusuario");
+            HttpPost post = new HttpPost("http://damnation.ddns.net/daniel/phpRestPFG/public/api/newusuario");
             post.setHeader("content-type", "application/json");
 
             try
@@ -91,20 +92,18 @@ public  class MySQLFirebase {
         String info;
         int icono;
         int upvotes;
-        int downvotes;
         String descripcion;
         int imagen;
         boolean favoritos;
         String usuario;
 
 
-       public Actualizar(int ID, String nombre, String info, int icono, int upvotes, int downvotes, String descripcion, int imagen, boolean favoritos, String usuario){
+       public Actualizar(int ID, String nombre, String info, int icono, int upvotes, String descripcion, int imagen, boolean favoritos, String usuario){
            this.ID = ID;
            this.nombre=nombre;
            this.info=info;
            this.icono=icono;
            this.upvotes=upvotes;
-           this.downvotes=downvotes;
            this.descripcion=descripcion;
            this.imagen=imagen;
            this.favoritos=favoritos;
@@ -118,7 +117,7 @@ public  class MySQLFirebase {
 
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPut put =new HttpPut("http://damnation.ddns.net/phpRestPFG/public/index.php/api/alimento/"
+            HttpPut put =new HttpPut("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento/"
                     + ID);
 
 
@@ -136,7 +135,6 @@ public  class MySQLFirebase {
 
                 dato.put("icono", icono);
                 dato.put("upvotes", upvotes);
-                dato.put("downvotes", downvotes);
                 dato.put("imagen", imagen);
 
                 String mUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -183,8 +181,13 @@ public  class MySQLFirebase {
 
         String usuario;
         int alimento;
+        Context context;
 
         boolean existe = false;
+
+        public ListarAllFavorites(Context context){
+            this.context = context;
+        }
 
         protected Boolean doInBackground(String... params) {
 
@@ -192,7 +195,7 @@ public  class MySQLFirebase {
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpGet del =
-                    new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/allfavorito/" + params[0]);
+                    new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/allfavorito/" + params[0]);
 
             del.setHeader("content-type", "application/json");
 
@@ -238,11 +241,15 @@ public  class MySQLFirebase {
 
         protected void onPostExecute(Boolean result) {
 
-            if (result )
+            if (result)
             {
-            new ControlFavoritos.Eliminar(usuario, alimento).execute();
+                Toast.makeText(context, "Quitado de Favoritos", Toast.LENGTH_SHORT).show();
+                new ControlFavoritos.Eliminar(usuario, alimento).execute();
+
+
 
             }else {
+                Toast.makeText(context, "Añadido a Favoritos", Toast.LENGTH_SHORT).show();
                 new ControlFavoritos.Insertar(usuario, alimento).execute();
             }
         }

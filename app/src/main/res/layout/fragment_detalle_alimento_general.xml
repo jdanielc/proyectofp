@@ -39,22 +39,20 @@
         android:orientation="horizontal">
         <Button
             android:id="@+id/btUpvote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="UPVOTE"
-            android:layout_marginRight="5dp"/>
-        <Button
-            android:id="@+id/btDownvote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="downvote"/>
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:text="PUSH"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/rectangulo2"/>
 
         <ImageButton
             android:id="@+id/idIconoFav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/ic_nofav"
             android:layout_marginLeft="10dp"
+            android:background="@drawable/elipse1"
+
             />
         <TextView
             android:layout_width="wrap_content"

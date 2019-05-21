@@ -55,7 +55,7 @@ public class Utilidades {
 
         private void tarea() {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1500);
             } catch (InterruptedException iee){
                 iee.printStackTrace();
             }

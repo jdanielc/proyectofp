@@ -44,14 +44,6 @@ public class alimentoVo implements Serializable {
         this.upvotes = upvotes;
     }
 
-    public int getDownvotes() {
-        return downvotes;
-    }
-
-    public void setDownvotes(int downvotes) {
-        this.downvotes = downvotes;
-    }
-
     public String getUser() {
         return user;
     }
@@ -83,18 +75,16 @@ public class alimentoVo implements Serializable {
     private int ID;
     private String descripcion;
     private int upvotes;
-    private int downvotes;
     private String user;
     private int imagenDetalle;
 
-    public alimentoVo(int ID, String nombre, String info, int imagenId, String descripcion, int upvotes, int downvotes, String user, int imagenDetalle){
+    public alimentoVo(int ID, String nombre, String info, int imagenId, String descripcion, int upvotes,  String user, int imagenDetalle){
         this.nombre = nombre;
         this.info = info;
         this.imagenId = imagenId;
         this.ID = ID;
         this.descripcion = descripcion;
         this.upvotes = upvotes;
-        this.downvotes = downvotes;
         this.user = user;
         this.imagenDetalle = imagenDetalle;
     }

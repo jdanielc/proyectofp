@@ -205,7 +205,7 @@ public class FragmentInicial extends Fragment implements SearchView.OnQueryTextL
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpGet del =
-                    new HttpGet("http://damnation.ddns.net/phpRestPFG/public/index.php/api/inicial");
+                    new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/inicial");
 
             del.setHeader("content-type", "application/json");
 
