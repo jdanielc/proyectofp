@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.proyectofinal.general.Modelo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRegistrar;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -243,13 +244,13 @@ public  class MySQLFirebase {
 
             if (result)
             {
-                Toast.makeText(context, "Quitado de Favoritos", Toast.LENGTH_SHORT).show();
+                FancyToast.makeText(context, "Quitado de Favoritos", FancyToast.LENGTH_SHORT, FancyToast.WARNING, true).show();
                 new ControlFavoritos.Eliminar(usuario, alimento).execute();
 
 
 
             }else {
-                Toast.makeText(context, "Añadido a Favoritos", Toast.LENGTH_SHORT).show();
+                FancyToast.makeText(context, "Añadido a Favoritos", FancyToast.LENGTH_SHORT, FancyToast.SUCCESS, true).show();
                 new ControlFavoritos.Insertar(usuario, alimento).execute();
             }
         }

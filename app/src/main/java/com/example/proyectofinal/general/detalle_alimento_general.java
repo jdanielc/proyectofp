@@ -32,6 +32,7 @@ import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.R;
 import com.example.proyectofinal.menu_creacion;
 import com.google.firebase.auth.FirebaseAuth;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -83,6 +84,8 @@ public class detalle_alimento_general extends Fragment{
     String nombreAlimento;
     String usuario;
 
+    TextView txtFav;
+
     public detalle_alimento_general() {
         // Required empty public constructor
     }
@@ -128,7 +131,7 @@ public class detalle_alimento_general extends Fragment{
         imageDetalle = vista.findViewById(R.id.imgenDetalleId);
         idIconoFav = vista.findViewById(R.id.idIconoFav);
         btLike = vista.findViewById(R.id.btUpvote);
-
+        txtFav = vista.findViewById(R.id.txtFavDetalle);
 
         //OnClick para favoritos
         idIconoFav.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +159,7 @@ public class detalle_alimento_general extends Fragment{
         nombreAlimento= alimentoVo.getNombre();
         getActivity().setTitle(nombreAlimento);
         usuario = alimentoVo.getUser();
+
 
         return vista;
     }
@@ -214,6 +218,7 @@ public class detalle_alimento_general extends Fragment{
         if(sonMisAlimentos){
             btLike.setVisibility(View.INVISIBLE);
             idIconoFav.setVisibility(View.INVISIBLE);
+            txtFav.setVisibility(View.INVISIBLE);
 
         }else{
             mod.setVisible(false);
