@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
 import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.general.Utilidades;
 import com.example.proyectofinal.general.alimentoVo;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -48,7 +50,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
  * Use the {@link menu_creacion#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class menu_creacion extends Fragment{
+public class menu_creacion extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,7 +77,7 @@ public class menu_creacion extends Fragment{
     String usuario;
     alimentoVo alimento;
 
-    public menu_creacion() {
+    public menu_creacion(){
         // Required empty public constructor
     }
 
@@ -129,8 +131,11 @@ public class menu_creacion extends Fragment{
         tipoAccion = getArguments().getInt("tipo");
 
         //Ajusta las variables necesarios dependiendo de la accion a realizar
-        if(tipoAccion == 1)
         usuario = getArguments().getString("usuario");
+
+        if(tipoAccion == 2){
+            alimento = (alimentoVo) getArguments().getSerializable("alimento");
+        }
 
 
         //CONFIGURANDO AL SPINNER
@@ -163,31 +168,7 @@ public class menu_creacion extends Fragment{
 
           seleccion(tipoAccion);
 
-          btAceptar.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-
-
-                  String nombre = newNombre.getText().toString();
-                  String info = newInfo.getText().toString();
-                  String descripcion = newDescripcion.getText().toString();
-
-                  Action action = new Action();
-
-                  action.execute(
-                          nombre,
-                          info,
-                          descripcion,
-                          usuario
-                  );
-
-                  Utilidades.waitingServer(getContext());
-
-                  //con esto vuelvo al fragment anterior
-                  getFragmentManager().popBackStack();
-
-              }
-          });
+        btAceptar.setOnClickListener(this);
 
         return vista;
     }
@@ -200,7 +181,17 @@ public class menu_creacion extends Fragment{
 
                 break;
             case 2:
+                getActivity().setTitle("Modificar Alimento");
 
+                //Pone los valores del alimento en los campos del formulario
+                newNombre.setText(alimento.getNombre());
+                newInfo.setText(alimento.getInfo());
+                newDescripcion.setText(alimento.getDescripcion());
+
+                //Pone el spinner en la posición del alimento
+                ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
+                int spinnerPosition = myAdap.getPosition(alimento.getImagenId());
+                spinner.setSelection(spinnerPosition);
 
                 break;
         }
@@ -232,6 +223,46 @@ public class menu_creacion extends Fragment{
         mListener = null;
     }
 
+    @Override
+    public void onClick(View v) {
+
+                //Si todos los datos se han introducido, llamamos a la clase que añade el alimento y despues volvemos
+                if(!newNombre.getText().toString().isEmpty() && !newInfo.getText().toString().isEmpty() && !newDescripcion.getText().toString().isEmpty()){
+
+                    String nombre = newNombre.getText().toString();
+                    String info = newInfo.getText().toString();
+                    String descripcion = newDescripcion.getText().toString();
+
+
+                    MySQLFirebase.Action action = new MySQLFirebase.Action(tipoAccion);
+
+
+                    action.execute(
+                            nombre,
+                            info,
+                            descripcion,
+                            usuario,
+                            ImagenSeleccion+"",
+                            alimento.getID()+""
+
+                    );
+
+
+                    Utilidades.waitingServer(getContext());
+                    
+                    Bundle bundle = new Bundle();
+                    Fragment fragment = new FragmentAlimentosPrincipal();
+                    bundle.putString("usuario", usuario);
+                    bundle.putInt("tipo", 2);
+                    fragment.setArguments(bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
+
+                }else {
+                    FancyToast.makeText(getContext(), "Ha de rellenar todos los campos", FancyToast.LENGTH_SHORT, FancyToast.ERROR, true).show();
+                }
+
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -248,73 +279,4 @@ public class menu_creacion extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-
-    private class Action extends AsyncTask<String,Integer,Boolean> {
-
-        protected Boolean doInBackground(String... params) {
-
-            boolean resul = true;
-
-            HttpClient httpClient = new DefaultHttpClient();
-
-            switch (tipoAccion) {
-                case 1:
-                    //AÑADIR
-                    resul = añadir(resul, httpClient, params);
-                    break;
-                case 2:
-
-                    break;
-
-            }
-
-
-            return resul;
-        }
-
-
-        private boolean añadir(boolean resul, HttpClient httpClient, String[] params) {
-
-            HttpPost post = new HttpPost("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
-            post.setHeader("content-type", "application/json");
-
-            try {
-                //Construimos el objeto cliente en formato JSON
-                JSONObject dato = new JSONObject();
-
-
-                dato.put("nombre", params[0]);
-                dato.put("info", params[1]);
-                dato.put("descripcion", params[2]);
-                dato.put("icono", ImagenSeleccion);
-                dato.put("imagen", ImagenSeleccion);
-                dato.put("upvotes", 0);
-                dato.put("favorito", null);
-                dato.put("usuario", params[3]);
-
-
-                StringEntity entity = new StringEntity(dato.toString());
-                post.setEntity(entity);
-
-                HttpResponse resp = httpClient.execute(post);
-                String respStr = EntityUtils.toString(resp.getEntity());
-
-               /* if (!respStr.equals("true"))
-                resul = false;*/
-            } catch (Exception ex) {
-                Log.e("ServicioRest", "Error!", ex);
-                resul = false;
-            }
-            return resul;
-        }
-
-        @SuppressLint("RestrictedApi")
-        protected void onPostExecute(Boolean result) {
-
-            if (result) {
-            }
-        }
-
-
-    }
 }

@@ -13,6 +13,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.proyectofinal.FragmentMenu;
 import com.example.proyectofinal.MainActivity;
 import com.example.proyectofinal.ObjetosFire.ControlFavoritos;
 import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
@@ -32,7 +34,6 @@ import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.R;
 import com.example.proyectofinal.menu_creacion;
 import com.google.firebase.auth.FirebaseAuth;
-import com.shashank.sony.fancytoastlib.FancyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -234,16 +235,9 @@ public class detalle_alimento_general extends Fragment{
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-
-        Fragment fragment = null;
-        boolean fragmentSeleccionado = false;
-        MainActivity mainActivity = ((MainActivity)getActivity());
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.idMenuModificar) {
             abrirformulario(2);
-
-
 
         }else if(id == R.id.idMenuEliminar){
 
@@ -265,19 +259,23 @@ public class detalle_alimento_general extends Fragment{
 
     private void abrirformulario(int tipo) {
 
-        menu_creacion menu_creacion1 = new menu_creacion();
+        menu_creacion creacion1 = new menu_creacion();
 
         //Usamos el Bundle para pasar el tipo de accion a realizar
         Bundle bundle = new Bundle();
 
         bundle.putInt("tipo",tipo);
         bundle.putSerializable("alimento", alimentoVo);
+        bundle.putString("usuario", usuario);
 
-        menu_creacion1.setArguments(bundle);
-        //En caso de que se pulse el boton
+        creacion1.setArguments(bundle);
 
-        getActivity().getSupportFragmentManager().beginTransaction().
-                replace(R.id.fragment_detalle_alimento_general, menu_creacion1).addToBackStack(null).commit();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_main, creacion1,"fragment_preguntas");
+        transaction.commit();
+
+        //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_detalle_alimento_general, creacion1).commit();
+
     }
 
 

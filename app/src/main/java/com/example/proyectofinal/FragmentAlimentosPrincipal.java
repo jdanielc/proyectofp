@@ -128,11 +128,13 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
         View vista = inflater.inflate(R.layout.fragment_fragment_alimentos_principal, container, false);
         btNuevo = vista.findViewById(R.id.fab);
 
+        Utilidades.waitingServer(getContext());
+
         try {
             //SI NO ES LA PRIMEAVEZ QUE SE CARGA EL FRAGMENT HACEMOS ESPERAR DURANTE UN SEGUNDO
-            if (savedInstanceState != null) {
+            /*if (savedInstanceState != null) {
                 Utilidades.waitingServer(getContext());
-            }
+            }*/
 
             //ASIGNO EL RECYCLERVIEW Y EL ARRAYLIST
             listaAlimentos = new ArrayList<>();
@@ -149,7 +151,6 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
 
             }
 
-            //SI SE HA SOLICITA LOS ALIMENTOS DEL USUARIO ACTUAL, TOMAMOS DEL BUNDLE EL USUARIO
             if(AlimentosSeleccionados == 1 || AlimentosSeleccionados == 0){
                 btNuevo.setVisibility(View.INVISIBLE);
 
@@ -179,7 +180,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                         getActivity().getSupportFragmentManager().beginTransaction().
                                 replace(R.id.fragment_alimentos_principal, menu_creacion1).addToBackStack(null).commit();
 
-                        btNuevo.setVisibility(View.INVISIBLE);
+                        //btNuevo.setVisibility(View.INVISIBLE);
 
 
                     }

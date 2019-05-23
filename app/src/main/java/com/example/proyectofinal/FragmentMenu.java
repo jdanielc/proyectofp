@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.proyectofinal.general.Utilidades;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -133,6 +134,7 @@ public class FragmentMenu extends Fragment implements View.OnClickListener{
             case R.id.btIniciom:
 
                 fragment = new FragmentMenu();
+
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
 
                 break;
