@@ -88,4 +88,6 @@ public class alimentoVo implements Serializable {
         this.user = user;
         this.imagenDetalle = imagenDetalle;
     }
+
+    public  alimentoVo(){}
 }

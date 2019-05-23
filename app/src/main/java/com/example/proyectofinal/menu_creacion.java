@@ -133,9 +133,13 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
         //Ajusta las variables necesarios dependiendo de la accion a realizar
         usuario = getArguments().getString("usuario");
 
-        if(tipoAccion == 2){
-            alimento = (alimentoVo) getArguments().getSerializable("alimento");
-        }
+
+
+        alimento = (alimentoVo) getArguments().getSerializable("alimento");
+
+
+            alimento = new alimentoVo();
+
 
 
         //CONFIGURANDO AL SPINNER
@@ -237,19 +241,33 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
                     MySQLFirebase.Action action = new MySQLFirebase.Action(tipoAccion);
 
 
-                    action.execute(
-                            nombre,
-                            info,
-                            descripcion,
-                            usuario,
-                            ImagenSeleccion+"",
-                            alimento.getID()+""
+                    if(tipoAccion == 1){
 
-                    );
+                        action.execute(
+                                nombre,
+                                info,
+                                descripcion,
+                                usuario,
+                                ImagenSeleccion+""
+
+                        );
+
+                    }else{
+                        action.execute(
+                                nombre,
+                                info,
+                                descripcion,
+                                usuario,
+                                ImagenSeleccion+"",
+                                alimento.getID()+""
+
+                        );
+
+                    }
 
 
                     Utilidades.waitingServer(getContext());
-                    
+
                     Bundle bundle = new Bundle();
                     Fragment fragment = new FragmentAlimentosPrincipal();
                     bundle.putString("usuario", usuario);

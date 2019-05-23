@@ -63,6 +63,7 @@ public  class MySQLFirebase {
                 String respStr = EntityUtils.toString(resp.getEntity());
 
                 if(!respStr.equals("true"))
+                    Log.e("ServicioRest",respStr, null);
                     resul = false;
             }
             catch(Exception ex)
@@ -84,96 +85,6 @@ public  class MySQLFirebase {
         }
 
     }
-
-
-    public static class Actualizar extends AsyncTask<String,Integer,Boolean> {
-
-        int ID;
-        String nombre;
-        String info;
-        int icono;
-        int upvotes;
-        String descripcion;
-        int imagen;
-        boolean favoritos;
-        String usuario;
-
-
-       public Actualizar(int ID, String nombre, String info, int icono, int upvotes, String descripcion, int imagen, boolean favoritos, String usuario){
-           this.ID = ID;
-           this.nombre=nombre;
-           this.info=info;
-           this.icono=icono;
-           this.upvotes=upvotes;
-           this.descripcion=descripcion;
-           this.imagen=imagen;
-           this.favoritos=favoritos;
-           this.usuario = usuario;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-        protected Boolean doInBackground(String... params) {
-
-            boolean resul = true;
-
-            HttpClient httpClient = new DefaultHttpClient();
-
-            HttpPut put =new HttpPut("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento/"
-                    + ID);
-
-
-            put.setHeader("content-type", "application/json");
-
-            try
-            {
-                //Construimos el objeto cliente en formato JSON
-                JSONObject dato = new JSONObject();
-
-                dato.put("id", ID);
-                dato.put("nombre", nombre);
-                dato.put("info", info);
-                dato.put("descripcion", descripcion);
-
-                dato.put("icono", icono);
-                dato.put("upvotes", upvotes);
-                dato.put("imagen", imagen);
-
-                String mUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                 dato.put("favoritos", 1);
-
-                dato.put("usuario", usuario);
-
-
-                StringEntity entity = new StringEntity(dato.toString());
-                put.setEntity(entity);
-
-                HttpResponse resp = httpClient.execute(put);
-                String respStr = EntityUtils.toString(resp.getEntity());
-
-
-                if(!respStr.equals("true"))
-                    resul = false;
-            }
-            catch(Exception ex)
-            {
-                Log.e("ServicioRest","Error!", ex);
-                resul = false;
-            }
-
-            return resul;
-        }
-
-        @SuppressLint("RestrictedApi")
-        protected void onPostExecute(Boolean result) {
-
-            if (result)
-            {
-                Toast.makeText(getApplicationContext(), "ELEMENTO ACTUALIZADO", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    }//
 
 
 
@@ -257,81 +168,6 @@ public  class MySQLFirebase {
     }
 
 
-  /*  private class Action extends AsyncTask<String,Integer,Boolean> {
-
-        int tipoAccion;
-
-        public Action(int tipoAccion){
-            this.tipoAccion = tipoAccion;
-        }
-
-
-        protected Boolean doInBackground(String... params) {
-
-            boolean resul = true;
-
-            HttpClient httpClient = new DefaultHttpClient();
-
-            switch (tipoAccion) {
-                case 1:
-                    //AÑADIR
-                    resul = ejecucion(resul, httpClient, params);
-                    break;
-                case 2:
-                    //MODIFICAR
-                    resul = ejecucion(resul, httpClient, params);
-                    break;
-            }
-
-            return resul;
-        }
-
-
-        private boolean ejecucion(boolean resul, HttpClient httpClient, String[] params) {
-
-
-            HttpPost post = new HttpPost("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
-            post.setHeader("content-type", "application/json");
-
-            try {
-                //Construimos el objeto cliente en formato JSON
-                JSONObject dato = new JSONObject();
-
-
-                dato.put("nombre", params[0]);
-                dato.put("info", params[1]);
-                dato.put("descripcion", params[2]);
-                dato.put("icono", params[4]);
-                dato.put("imagen", params[4]);
-                dato.put("upvotes", 0);
-                dato.put("favorito", null);
-                dato.put("usuario", params[3]);
-
-
-                StringEntity entity = new StringEntity(dato.toString());
-                post.setEntity(entity);
-
-                HttpResponse resp = httpClient.execute(post);
-                String respStr = EntityUtils.toString(resp.getEntity());
-
-            } catch (Exception ex) {
-                Log.e("ServicioRest", "Error!", ex);
-                resul = false;
-            }
-            return resul;
-        }
-
-        @SuppressLint("RestrictedApi")
-        protected void onPostExecute(Boolean result) {
-
-            if (result) {
-
-            }
-        }
-
-
-    }
-*/
     public static class Action extends AsyncTask<String,Integer,Boolean> {
 
         int tipoAccion;
@@ -400,6 +236,7 @@ public  class MySQLFirebase {
 
                 if(!respStr.equals("true"))
                     resul = false;
+                Log.e("Servicio Rest",respStr, null);
             }
             catch(Exception ex)
             {

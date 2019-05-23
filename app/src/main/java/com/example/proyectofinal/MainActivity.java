@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -64,27 +65,20 @@ public class MainActivity extends AppCompatActivity
 
 
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        if(user == null){
+            //AUTENTIFICACIÓN
+            providers = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),//Email Builder
+                    new AuthUI.IdpConfig.PhoneBuilder().build(),//Phone Builder
+                    new AuthUI.IdpConfig.GoogleBuilder().build()//Email Builder
 
+            );
 
+            showSignInOption();
+        }
 
-
-        //AUTENTIFICACIÓN
-        providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),//Email Builder
-                new AuthUI.IdpConfig.PhoneBuilder().build(),//Phone Builder
-                new AuthUI.IdpConfig.GoogleBuilder().build()//Email Builder
-
-        );
-
-
-        showSignInOption();
-
-        //CARGA EL FRAGMENT AL INICIAR LA APLICACIÓN
-        /*
-        FragmentTransaction transaction = ((MainActivity) this).getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_main, new FragmentInicial(),"fragment_preguntas");
-        transaction.commit();*/
 
         FragmentTransaction transaction = ((MainActivity) this).getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_main, new FragmentMenu(),"fragment_preguntas");
@@ -109,18 +103,33 @@ public class MainActivity extends AppCompatActivity
                 //Get User
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+
                 usuario = user.getUid();
-                //Show email
+
+                if(usuario == null)
+                    Log.e("Servicio Rest","Usuario Nulo", null);
 
 
                 if (response.isNewUser()) {
+
+                    String id = user.getUid();
+
+                    String nickname;
+                    if(user.getDisplayName() != null){
+                        nickname=user.getDisplayName();
+                    }else{
+                        nickname = user.getUid();
+                    }
+
+
+
                     MySQLFirebase.Insertar insertar = new MySQLFirebase.Insertar();
-                    insertar.execute(user.getUid(),
-                            user.getDisplayName(),
+                    insertar.execute(
+
+                            id,
+                            nickname,
                             user.getEmail()
                     );
-
-
                 }
             } else {
                 Toast.makeText(this, "" + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
@@ -139,11 +148,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-
-        return true;
-    }
+    public boolean onCreateOptionsMenu(Menu menu) { return true; }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

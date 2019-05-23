@@ -2,7 +2,6 @@ package com.example.proyectofinal;
 
 import android.content.Context;
 import android.net.Uri;
-import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -96,15 +95,8 @@ public class Opciones extends Fragment {
                             public void onComplete(@NonNull Task<Void> task) {
                                 logOut.setEnabled(false);
 
+                                getActivity().recreate();
 
-                                MainActivity mainActivity = (MainActivity) getActivity();
-                                mainActivity.showSignInOption();
-
-
-
-
-
-                                //(MainActivity)getActivity().showSignInOption();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
