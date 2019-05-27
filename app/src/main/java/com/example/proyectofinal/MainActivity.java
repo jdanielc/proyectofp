@@ -1,23 +1,51 @@
 package com.example.proyectofinal;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.View;
+import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.SearchView;
+import android.widget.Toast;
+import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
+import com.example.proyectofinal.Principal.IComunicaFragments;
+import com.example.proyectofinal.general.alimentoVo;
+import com.example.proyectofinal.general.detalle_alimento_general;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentAlimentosPrincipal.OnFragmentInteractionListener,
-        FragmentInicial.OnFragmentInteractionListener{
+        FragmentInicial.OnFragmentInteractionListener, IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener,
+        Opciones.OnFragmentInteractionListener, menu_creacion.OnFragmentInteractionListener, FragmentMenu.OnFragmentInteractionListener{
+
+
+    private static final int MY_REQUEST_CODE = 7117;
+
+    private static String usuario;
+    List<AuthUI.IdpConfig> providers;
+    FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
+    FragmentInicial fragmentInicial;
+    detalle_alimento_general detalle_alimento_general;
+    menu_creacion pantallaCreacion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,14 +54,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -43,6 +63,84 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user == null){
+            //AUTENTIFICACIÓN
+            providers = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),//Email Builder
+                    new AuthUI.IdpConfig.PhoneBuilder().build(),//Phone Builder
+                    new AuthUI.IdpConfig.GoogleBuilder().build()//Email Builder
+
+            );
+
+            showSignInOption();
+        }else{
+
+            usuario = user.getUid();
+        }
+
+
+        FragmentTransaction transaction = ((MainActivity) this).getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_main, new FragmentMenu(),"fragment_preguntas");
+        transaction.commit();
+
+    }
+
+    public void showSignInOption() {
+        startActivityForResult(
+                AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).setTheme(R.style.MyTheme)
+                        .build(), MY_REQUEST_CODE
+        );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MY_REQUEST_CODE) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                //Get User
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+                usuario = user.getUid();
+
+                Toast.makeText(this, usuario, Toast.LENGTH_SHORT).show();
+
+                if(usuario == null)
+                    Log.e("Servicio Rest","Usuario Nulo", null);
+
+
+                if (response.isNewUser()) {
+
+                    String id = user.getUid();
+
+                    String nickname;
+                    if(user.getDisplayName() != null){
+                        nickname=user.getDisplayName();
+                    }else{
+                        nickname = user.getUid();
+                    }
+
+
+
+                    MySQLFirebase.Insertar insertar = new MySQLFirebase.Insertar();
+                    insertar.execute(
+
+                            id,
+                            nickname,
+                            user.getEmail()
+                    );
+                }
+            } else {
+                Toast.makeText(this, "" + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -56,57 +154,71 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+    public boolean onCreateOptionsMenu(Menu menu) { return true; }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
+
 
         return super.onOptionsItemSelected(item);
     }
 
+    ///SELECCIONA EL FRAGMENT EN EL MENU LATERAL
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        Bundle bundle = new Bundle();
+
+
         int id = item.getItemId();
         Fragment fragment = null;
         boolean fragmentSeleccionado = false;
+        //ASIGNO LOS FRAGMENT SELECCIONADOS Y LE PASO AL FRAGMENT A TRAVES DE UN BUNDLE QUE HA DE MOSTRAR
+        //TRUE MOSTRARA TODOS LOS ALIMENTOS, FALSE SOLO MOSTRARA LOS DEL USUARIO CONECTADO
 
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            fragment = new FragmentAlimentosPrincipal();
+        if (id == R.id.nav_inicio) {
+            fragment = new FragmentMenu();
             fragmentSeleccionado = true;
 
-        } else if (id == R.id.nav_slideshow) {
+        }else if(id == R.id.nav_lista){
+            fragment = new FragmentInicial();
+            fragmentSeleccionado = true;
+        }
+        else if (id == R.id.nav_forum) {
 
-        } else if (id == R.id.nav_manage) {
+            fragment = new FragmentAlimentosPrincipal();
+            bundle.putString("usuario", usuario);
+            bundle.putInt("tipo", 1);
+            fragmentSeleccionado = true;
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_mis) {
+
+            fragment = new FragmentAlimentosPrincipal();
+            bundle.putString("usuario", usuario);
+            bundle.putInt("tipo", 2);
+            fragmentSeleccionado = true;
+
+        } else if (id == R.id.nav_fav) {
+
+            fragment = new FragmentAlimentosPrincipal();
+            bundle.putString("usuario", usuario);
+            bundle.putInt("tipo", 3);
+            fragmentSeleccionado = true;
 
         } else if (id == R.id.nav_send) {
-
+            fragment = new Opciones();
+            fragmentSeleccionado = true;
         }
 
+        fragment.setArguments(bundle);
 
-        if(fragmentSeleccionado){
+        //SI SE HA SELECCIONADO UN FRAGMENTO, ESTE SE CARGA
+        if (fragmentSeleccionado) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -117,4 +229,36 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void enviarAlimento(alimentoVo alimentoVo, boolean feed) {
+        detalle_alimento_general = new detalle_alimento_general();
+
+        Bundle bundleEnvio = new Bundle();
+
+        bundleEnvio.putSerializable("objeto", alimentoVo);
+
+        bundleEnvio.putSerializable("usuario", usuario);
+
+
+        //Este boleano nos indicara si se carga el recycler desde el feed o el de mis alimentos
+        //Lo usaremos para saber si ocultar o no el menu
+        if(feed){
+            bundleEnvio.putBoolean("feed", true);
+        }else{
+            bundleEnvio.putBoolean("feed", false);
+
+        }
+
+        detalle_alimento_general.setArguments(bundleEnvio);
+
+        //cargar el fragment en el activity
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_main, detalle_alimento_general).addToBackStack(null)
+                .commit();
+    }
+
+
 }
+

@@ -13,9 +13,10 @@ import com.example.proyectofinal.general.alimentoVo;
 
 import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder>{
+public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder> implements View.OnClickListener {
 
     ArrayList<alimentoVo> listaAlimentos;
+    private View.OnClickListener listener;
 
     public Adapter(ArrayList<alimentoVo> listaAlimentos){
         this.listaAlimentos = listaAlimentos;
@@ -25,6 +26,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder>{
     @Override
     public AlimentoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list,null,false);
+        RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        view.setLayoutParams(lp);
         return new AlimentoViewHolder(view);
     }
 
@@ -40,7 +43,26 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder>{
         return listaAlimentos.size();
     }
 
-    public class AlimentoViewHolder extends RecyclerView.ViewHolder {
+    public void setOnClickListener(View.OnClickListener listener){
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(listener!=null){
+            listener.onClick(v);
+        }
+    }
+
+    public void updateList(ArrayList<alimentoVo> listaNueva){
+        listaAlimentos = new ArrayList<>();
+        listaAlimentos.addAll(listaNueva);
+        notifyDataSetChanged();
+    }
+
+
+
+    public class AlimentoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView txtNombre,txtInformacion;
         ImageView foto;
 
@@ -49,6 +71,19 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder>{
             txtNombre= (TextView) itemView.findViewById(R.id.idNombre);
             txtInformacion= (TextView) itemView.findViewById(R.id.idInfo);
             foto= (ImageView) itemView.findViewById(R.id.idImagen);
+
+            itemView.setOnClickListener((View.OnClickListener) this);
+
+        }
+
+
+        @Override
+        public void onClick(View v) {
+            if(listener!=null){
+                listener.onClick(v);
+            }
         }
     }
+
+
 }
