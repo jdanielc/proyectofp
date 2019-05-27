@@ -34,6 +34,7 @@ import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.R;
 import com.example.proyectofinal.menu_creacion;
 import com.google.firebase.auth.FirebaseAuth;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -57,7 +58,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
  * Use the {@link detalle_alimento_general#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class detalle_alimento_general extends Fragment{
+public class detalle_alimento_general extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,7 +76,7 @@ public class detalle_alimento_general extends Fragment{
     menu_creacion menu_creacion;
 
     alimentoVo alimentoVo = null;
-    ImageView idIconoFav;
+    Button idIconoFav;
 
     Button btLike;
 
@@ -85,7 +86,6 @@ public class detalle_alimento_general extends Fragment{
     String nombreAlimento;
     String usuario;
 
-    TextView txtFav;
 
     public detalle_alimento_general() {
         // Required empty public constructor
@@ -132,17 +132,10 @@ public class detalle_alimento_general extends Fragment{
         imageDetalle = vista.findViewById(R.id.imgenDetalleId);
         idIconoFav = vista.findViewById(R.id.idIconoFav);
         btLike = vista.findViewById(R.id.btUpvote);
-        txtFav = vista.findViewById(R.id.txtFavDetalle);
 
-        //OnClick para favoritos
-        idIconoFav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Actualizar();
-
-
-            }
-        });
+        //OnClick para favoritos y push
+        idIconoFav.setOnClickListener(this);
+        btLike.setOnClickListener(this);
 
         objetoAlimento = getArguments();
 
@@ -189,6 +182,32 @@ public class detalle_alimento_general extends Fragment{
         mListener = null;
     }
 
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+            case R.id.idIconoFav:
+
+                String usuario = objetoAlimento.getSerializable("usuario").toString();
+                String alimento = alimentoVo.getID()+"";
+
+                MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites(getContext());
+
+                listarAllFavorites.execute(
+                        usuario,
+                        alimento
+                );
+
+                break;
+
+            case R.id.btUpvote:
+
+                FancyToast.makeText(getContext(), "Aun no implementado", FancyToast.LENGTH_SHORT, FancyToast.INFO, true).show();
+
+                break;
+        }
+
+    }
 
 
     /**
@@ -219,7 +238,6 @@ public class detalle_alimento_general extends Fragment{
         if(sonMisAlimentos){
             btLike.setVisibility(View.INVISIBLE);
             idIconoFav.setVisibility(View.INVISIBLE);
-            txtFav.setVisibility(View.INVISIBLE);
 
         }else{
             mod.setVisible(false);
@@ -283,16 +301,6 @@ public class detalle_alimento_general extends Fragment{
 
     //Llama al metodo de actualizado de la base de datos
     public void Actualizar(){
-
-        String usuario = objetoAlimento.getSerializable("usuario").toString();
-        String alimento = alimentoVo.getID()+"";
-
-        MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites(getContext());
-
-        listarAllFavorites.execute(
-                usuario,
-                alimento
-        );
 
     }
 

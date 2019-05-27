@@ -40,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -65,7 +66,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
  * Use the {@link FragmentAlimentosPrincipal#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentAlimentosPrincipal extends Fragment implements SearchView.OnQueryTextListener{
+public class FragmentAlimentosPrincipal extends Fragment implements SearchView.OnQueryTextListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -90,7 +91,6 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
 
     public FragmentAlimentosPrincipal() {
     }
-
 
     /**
      * Use this factory method to create a new instance of
@@ -124,18 +124,12 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //
         View vista = inflater.inflate(R.layout.fragment_fragment_alimentos_principal, container, false);
         btNuevo = vista.findViewById(R.id.fab);
 
         Utilidades.waitingServer(getContext());
 
         try {
-            //SI NO ES LA PRIMEAVEZ QUE SE CARGA EL FRAGMENT HACEMOS ESPERAR DURANTE UN SEGUNDO
-            /*if (savedInstanceState != null) {
-                Utilidades.waitingServer(getContext());
-            }*/
-
             //ASIGNO EL RECYCLERVIEW Y EL ARRAYLIST
             listaAlimentos = new ArrayList<>();
             recyclerView = (RecyclerView) vista.findViewById(R.id.recyclerAlimentosId);
@@ -151,16 +145,16 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
 
             }
 
-            if(AlimentosSeleccionados == 1 || AlimentosSeleccionados == 0){
+            if (AlimentosSeleccionados == 1 || AlimentosSeleccionados == 0) {
                 btNuevo.setVisibility(View.INVISIBLE);
 
                 sonMisAlimentos = false;
-            }else if( AlimentosSeleccionados == 3 ){
+            } else if (AlimentosSeleccionados == 3) {
                 btNuevo.setVisibility(View.INVISIBLE);
+
                 sonMisAlimentos = false;
 
-            }
-            else if (AlimentosSeleccionados == 2) {
+            } else if (AlimentosSeleccionados == 2) {
 
                 btNuevo.setVisibility(View.VISIBLE);
                 btNuevo.setOnClickListener(new View.OnClickListener() {
@@ -193,15 +187,14 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
 
             if (AlimentosSeleccionados == 2) {
                 getActivity().setTitle("Mis Alimentos");
-            } else if(AlimentosSeleccionados == 1){
+            } else if (AlimentosSeleccionados == 1) {
                 getActivity().setTitle("Forum");
-            }else if(AlimentosSeleccionados == 3){
+            } else if (AlimentosSeleccionados == 3) {
                 getActivity().setTitle("Favoritos");
             }
 
 
             new Listar(AlimentosSeleccionados).execute();
-
             adapter = new Adapter(listaAlimentos);
             recyclerView.setAdapter(adapter);
 
@@ -211,13 +204,10 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                 public void onClick(View v) {
 
                     Bundle bundleEnvio = new Bundle();
-
                     alimentoVo alimento = listaAlimentos.get(recyclerView.getChildAdapterPosition(v));
 
                     bundleEnvio.putSerializable("objeto", alimento);
-
                     bundleEnvio.putSerializable("usuario", usuario);
-
 
                     //Este boleano nos indicara si se carga el recycler desde el feed o el de mis alimentos
                     //Lo usaremos para saber si ocultar o no el menu
@@ -225,15 +215,12 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                         bundleEnvio.putBoolean("feed", true);
                     } else {
                         bundleEnvio.putBoolean("feed", false);
-
                     }
 
                     detalle_alimento_general detalle = new detalle_alimento_general();
-
                     detalle.setArguments(bundleEnvio);
 
                     //cargar el fragment en el activity
-
                     getActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.content_main, detalle).addToBackStack(null)
                             .commit();
@@ -241,12 +228,13 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                 }
             });
 
-
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return vista;
     }
+
+
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -260,7 +248,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if(context instanceof  Activity){
+        if (context instanceof Activity) {
             this.activity = (Activity) context;
             interfaceComunicaFragments = (IComunicaFragments) this.activity;
         }
@@ -285,15 +273,10 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.main, menu);
-
-
         MenuItem mod = menu.findItem(R.id.idMenuModificar);
         MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
-
-
         mod.setVisible(false);
         eliminar.setVisible(false);
-
         MenuItem menuItem = menu.findItem(R.id.idBuscar);
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(this);
@@ -310,15 +293,20 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
     public boolean onQueryTextChange(String newText) {
         String userInput = newText.toLowerCase();
         ArrayList<alimentoVo> newList = new ArrayList<alimentoVo>();
-        for(alimentoVo componente : listaAlimentos){
-            if(componente.getNombre().toLowerCase().contains(userInput) || componente.getDescripcion().toLowerCase().contains(userInput)){
+
+        for (alimentoVo componente : listaAlimentos) {
+            if (componente.getNombre().toLowerCase().contains(userInput) || componente.getDescripcion().toLowerCase().contains(userInput)) {
                 newList.add(componente);
             }
         }
-        adapter.updateList(newList);
+
+        if (newList.size() > 0) {
+            adapter.updateList(newList);
+        } else {
+            FancyToast.makeText(getContext(), "Aun no ha añadido aquí alimentos", FancyToast.LENGTH_SHORT, FancyToast.INFO, true).show();
+        }
         return true;
     }
-
 
 
     /**
@@ -337,12 +325,12 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
     }
 
 
-    private class Listar extends AsyncTask<String,Integer,Boolean> {
+    private class Listar extends AsyncTask<String, Integer, Boolean> {
 
         int AlimentosListar;
 
 
-        public Listar(int AlimentosListar){
+        public Listar(int AlimentosListar) {
             this.AlimentosListar = AlimentosListar;
         }
 
@@ -356,7 +344,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet del = null;
 
-            switch (AlimentosListar){
+            switch (AlimentosListar) {
                 case 1:
                     del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
                     resul = HttpGet(resul, httpClient, del);
@@ -372,21 +360,20 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                     resul = HttpGet(resul, httpClient, del);
 
                     //Filtro los alimentos
-                    fragmentFavoritos(httpClient);
+                    resul = fragmentFavoritos(httpClient);
 
                     break;
-                    default:
+                default:
                     del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
                     resul = HttpGet(resul, httpClient, del);
-                        break;
+                    break;
             }
 
             return resul;
         }
 
         private boolean HttpGet(boolean resul, HttpClient httpClient, HttpGet del) {
-            try
-            {
+            try {
                 del.setHeader("content-type", "application/json");
 
                 HttpResponse resp = httpClient.execute(del);
@@ -394,7 +381,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
 
                 JSONArray mensajes = new JSONArray(respStr);
 
-                for(int i =0; i<mensajes.length(); i++){
+                for (int i = 0; i < mensajes.length(); i++) {
 
                     JSONObject mensaje = mensajes.getJSONObject(i);
 
@@ -405,79 +392,78 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                     int upvotes = mensaje.getInt("upvotes");
                     String descripcion = mensaje.getString("descripcion");
                     int imagen = mensaje.getInt("imagenDetalle");
-                    String usuario= mensaje.getString("usuario");
+                    String usuario = mensaje.getString("usuario");
 
 
-                    alimentoVo elemento = new alimentoVo(id, nombre, info, icono ,descripcion, upvotes,
+                    alimentoVo elemento = new alimentoVo(id, nombre, info, icono, descripcion, upvotes,
                             usuario, imagen);
 
                     listaAlimentos.add(elemento);
                 }
 
-            }
-            catch(Exception ex)
-            {
-                Log.e("ServicioRest","Error!", ex);
+            } catch (Exception ex) {
+                Log.e("ServicioRest", "Error!", ex);
                 resul = false;
             }
             return resul;
         }
 
-        private void fragmentFavoritos(HttpClient httpClient) {
+        private boolean fragmentFavoritos(HttpClient httpClient) {
             ArrayList<Integer> listaID = new ArrayList<>();
             ArrayList<alimentoVo> listaFavoritos = new ArrayList<>();
+            boolean resul = false;
 
             HttpGet del =
                     new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/allfavorito/" + usuario);
 
             del.setHeader("content-type", "application/json");
 
-            try
-            {
+            try {
                 HttpResponse resp = httpClient.execute(del);
                 String respStr = EntityUtils.toString(resp.getEntity());
 
                 JSONArray mensajes = new JSONArray(respStr);
 
                 /*Tomo todos los IDs de los alimentos de la tabla de favoritos correspondiente a el usuario actual*/
-                for(int i =0; i<mensajes.length(); i++){
+                for (int i = 0; i < mensajes.length(); i++) {
 
                     JSONObject mensaje = mensajes.getJSONObject(i);
-
                     listaID.add(mensaje.getInt("alimento"));
-
                 }
 
                 /*Tomo los alimentos de la lista de alimentos cuyos IDs coinciden con los IDs de alimentos favoritos
-                * y los almaceno en un ArrayList aparte*/
-                for (alimentoVo alimento:
-                     listaAlimentos) {
-                    if(listaID.contains(alimento.getID())){
-                        listaFavoritos.add(alimento);
+                 * y los almaceno en un ArrayList aparte*/
+                if (listaID.size() > 0) {
+                    for (alimentoVo alimento :
+                            listaAlimentos) {
+                        if (listaID.contains(alimento.getID())) {
+                            listaFavoritos.add(alimento);
+                        }
                     }
+
+                    //Vacio la lista de alimentos y la relleno con los alimentos guardados aparte anteriormente
+                    listaAlimentos.clear();
+                    listaAlimentos = listaFavoritos;
+                    resul = true;
+                } else {
+                    listaAlimentos.clear();
+                    resul = false;
                 }
 
-                //Vacio la lista de alimentos y la relleno con los alimentos guardados aparte anteriormente
-                listaAlimentos.clear();
-                listaAlimentos = listaFavoritos;
+            } catch (Exception ex) {
+                Log.e("ServicioRest", "Error!", ex);
 
             }
-            catch(Exception ex)
-            {
-                Log.e("ServicioRest","Error!", ex);
+            return resul;
 
-            }
         }
 
         protected void onPostExecute(Boolean result) {
 
-            if (result)
-            {
+            if (result && listaAlimentos.size() > 0) {
                 //Rellenamos la lista con los resultados
                 adapter.updateList(listaAlimentos);
             }
         }
     }
-
-
 }

@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatActivity
             );
 
             showSignInOption();
+        }else{
+
+            usuario = user.getUid();
         }
 
 
@@ -105,6 +109,8 @@ public class MainActivity extends AppCompatActivity
 
 
                 usuario = user.getUid();
+
+                Toast.makeText(this, usuario, Toast.LENGTH_SHORT).show();
 
                 if(usuario == null)
                     Log.e("Servicio Rest","Usuario Nulo", null);
@@ -201,10 +207,6 @@ public class MainActivity extends AppCompatActivity
             bundle.putString("usuario", usuario);
             bundle.putInt("tipo", 3);
             fragmentSeleccionado = true;
-
-        } else if (id == R.id.nav_share) {
-
-            Toast.makeText(this, "No implementado", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_send) {
             fragment = new Opciones();

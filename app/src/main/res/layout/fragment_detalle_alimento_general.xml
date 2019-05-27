@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,16 +13,20 @@
     tools:context=".general.detalle_alimento_general"
     android:id="@+id/fragment_detalle_alimento_general">
 
+
     <ImageView
+
         android:id="@+id/imgenDetalleId"
         android:layout_width="match_parent"
         android:layout_height="350dp"
+
         android:src="@drawable/plato"
         android:scaleType="fitXY"
         android:layout_marginBottom="10dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="25dp"
         android:text="Descripcion"
         android:textStyle="bold"/>
 
@@ -29,7 +39,9 @@
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="27dp"
+        android:layout_height="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="?android:attr/listDivider"
         android:visibility="visible" />
 
@@ -37,6 +49,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/idIconoFav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favoritos"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:src="@drawable/ic_nofav"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/rectangulo_fav"
+            android:drawableLeft="@drawable/ic_nofav"
+            android:layout_marginBottom="25dp"
+            />
         <Button
             android:id="@+id/btUpvote"
             android:layout_width="150dp"
@@ -45,22 +71,10 @@
             android:layout_marginRight="5dp"
             android:background="@drawable/rectangulo2"/>
 
-        <ImageButton
-            android:id="@+id/idIconoFav"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_nofav"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/elipse1"
 
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtFavDetalle"
-            android:text="Favoritos"/>
+
 
 
     </LinearLayout>
-
 </LinearLayout>
+</ScrollView>

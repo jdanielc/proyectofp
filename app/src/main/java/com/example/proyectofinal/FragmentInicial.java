@@ -132,7 +132,7 @@ public class FragmentInicial extends Fragment implements SearchView.OnQueryTextL
 
         recyclerInicial.setAdapter(adapterInicio);
 
-        getActivity().setTitle("Inicio");
+        getActivity().setTitle("Comprobados");
 
         return vista;
     }

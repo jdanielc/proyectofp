@@ -138,9 +138,6 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
         alimento = (alimentoVo) getArguments().getSerializable("alimento");
 
 
-            alimento = new alimentoVo();
-
-
 
         //CONFIGURANDO AL SPINNER
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(), R.array.tipos, android.R.layout.simple_spinner_item);
@@ -159,7 +156,7 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
                     case "Cereales y Legumbres":ImagenSeleccion = R.drawable.plato; break;
                     case "Dulces y Golosinas": ImagenSeleccion = R.drawable.precocinados; break;
                     case "Platos Precocinados":ImagenSeleccion = R.drawable.precocinados; break;
-                    case "Salsas y Especias":ImagenSeleccion = R.drawable.especias; break;
+                    case "Salsas y Especias":ImagenSeleccion = R.drawable.precocinados; break;
                 }
             }
             
