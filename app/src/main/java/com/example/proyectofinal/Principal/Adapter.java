@@ -1,5 +1,6 @@
 package com.example.proyectofinal.Principal;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,6 +34,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder> im
 
     @Override
     public void onBindViewHolder(@NonNull AlimentoViewHolder alimentoViewHolder, int i) {
+        if(listaAlimentos.get(i).isSeguro()){
+            alimentoViewHolder.txtNombre.setTextColor(Color.parseColor("#D4AF37"));
+        }
+
         alimentoViewHolder.txtNombre.setText(listaAlimentos.get(i).getNombre());
         alimentoViewHolder.txtInformacion.setText(listaAlimentos.get(i).getInfo());
         alimentoViewHolder.foto.setImageResource(listaAlimentos.get(i).getImagenId());
@@ -71,6 +76,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AlimentoViewHolder> im
             txtNombre= (TextView) itemView.findViewById(R.id.idNombre);
             txtInformacion= (TextView) itemView.findViewById(R.id.idInfo);
             foto= (ImageView) itemView.findViewById(R.id.idImagen);
+
 
             itemView.setOnClickListener((View.OnClickListener) this);
 

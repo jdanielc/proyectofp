@@ -1,20 +1,11 @@
 package com.example.proyectofinal.general;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,30 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.proyectofinal.FragmentMenu;
-import com.example.proyectofinal.MainActivity;
-import com.example.proyectofinal.ObjetosFire.ControlFavoritos;
 import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
-import com.example.proyectofinal.Principal.IComunicaFragments;
 import com.example.proyectofinal.R;
 import com.example.proyectofinal.menu_creacion;
-import com.google.firebase.auth.FirebaseAuth;
 import com.shashank.sony.fancytoastlib.FancyToast;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 /**
@@ -75,14 +47,14 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
 
     menu_creacion menu_creacion;
 
-    alimentoVo alimentoVo = null;
+    alimentoVo alimento = null;
     Button idIconoFav;
 
     Button btLike;
 
     Bundle objetoAlimento;
 
-    boolean sonMisAlimentos;
+    int tipoAccion;
     String nombreAlimento;
     String usuario;
 
@@ -141,18 +113,23 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
 
         //si hay contenido en el bundle lo volcamos al objeto alimentoVo
         if(objetoAlimento != null){
-            alimentoVo = (alimentoVo) objetoAlimento.getSerializable("objeto");
-            imageDetalle.setImageResource(alimentoVo.getImagenDetalle());
-            txtDetalle.setText(alimentoVo.getDescripcion());
-            sonMisAlimentos = objetoAlimento.getBoolean("feed");
+            alimento = (alimentoVo) objetoAlimento.getSerializable("objeto");
+            imageDetalle.setImageResource(alimento.getImagenDetalle());
+            txtDetalle.setText(alimento.getDescripcion());
+            if(alimento.isSeguro()){
+                txtDetalle.setTextColor(Color.parseColor("#D4AF37"));
+            }
+            tipoAccion = objetoAlimento.getInt("tipo");
         }
 
         setHasOptionsMenu(true);
 
         //Cambio el titulo a la actividad e inicializo las opciones necesarios para el borrado en caso de ser necesario
-        nombreAlimento= alimentoVo.getNombre();
+        nombreAlimento= alimento.getNombre();
         getActivity().setTitle(nombreAlimento);
-        usuario = alimentoVo.getUser();
+        FancyToast.makeText(getContext(), nombreAlimento, FancyToast.LENGTH_SHORT, FancyToast.DEFAULT, true).show();
+
+        usuario = alimento.getUser();
 
 
         return vista;
@@ -189,13 +166,13 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
             case R.id.idIconoFav:
 
                 String usuario = objetoAlimento.getSerializable("usuario").toString();
-                String alimento = alimentoVo.getID()+"";
+                String alimentoID = alimento.getID()+"";
 
                 MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites(getContext());
 
                 listarAllFavorites.execute(
                         usuario,
-                        alimento
+                        alimentoID
                 );
 
                 break;
@@ -235,11 +212,32 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
         MenuItem mod = menu.findItem(R.id.idMenuModificar);
         MenuItem eliminar = menu.findItem(R.id.idMenuEliminar);
 
-        if(sonMisAlimentos){
-            btLike.setVisibility(View.INVISIBLE);
-            idIconoFav.setVisibility(View.INVISIBLE);
 
-        }else{
+        switch(tipoAccion){
+            case 0:
+                btLike.setVisibility(View.INVISIBLE);
+                idIconoFav.setVisibility(View.VISIBLE);
+                mod.setVisible(false);
+                eliminar.setVisible(false);
+
+                break;
+            case 1:
+                mod.setVisible(false);
+                eliminar.setVisible(false);
+
+                break;
+            case 2:
+                btLike.setVisibility(View.INVISIBLE);
+                break;
+            case 3:
+                mod.setVisible(false);
+                eliminar.setVisible(false);
+                break;
+        }
+
+        if(alimento.isSeguro()){
+            btLike.setVisibility(View.INVISIBLE);
+            idIconoFav.setVisibility(View.VISIBLE);
             mod.setVisible(false);
             eliminar.setVisible(false);
         }
@@ -260,17 +258,13 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
         }else if(id == R.id.idMenuEliminar){
 
         //En caso de que se seleccione eliminar, llamo a la clase para eliminar y vuelvo al fragment anterior
-        Eliminar eliminar = new Eliminar();
+        Eliminar eliminar = new Eliminar(this, getContext());
 
         eliminar.execute();
 
-        Utilidades.waitingServer(getContext());
-
          //con esto vuelvo al fragment anterior
          getFragmentManager().popBackStack();
-
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -283,7 +277,7 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
         Bundle bundle = new Bundle();
 
         bundle.putInt("tipo",tipo);
-        bundle.putSerializable("alimento", alimentoVo);
+        bundle.putSerializable("alimento", alimento);
         bundle.putString("usuario", usuario);
 
         creacion1.setArguments(bundle);
@@ -292,64 +286,7 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
         transaction.replace(R.id.content_main, creacion1,"fragment_preguntas");
         transaction.commit();
 
-        //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_detalle_alimento_general, creacion1).commit();
-
     }
 
-
-
-
-    //Llama al metodo de actualizado de la base de datos
-    public void Actualizar(){
-
-    }
-
-    private class Eliminar extends AsyncTask<String,Integer,Boolean> {
-
-
-        protected Boolean doInBackground(String... params) {
-
-            boolean resul = true;
-
-            HttpClient httpClient = new DefaultHttpClient();
-
-
-            HttpPut del =
-                    new HttpPut("http://damnation.ddns.net/daniel/phpRestPFG/public/api/delalimento");
-
-            del.setHeader("content-type", "application/json");
-
-            try
-            {
-                JSONObject dato = new JSONObject();
-
-                dato.put("usuario", usuario);
-                dato.put("alimento", nombreAlimento);
-
-
-                StringEntity entity = new StringEntity(dato.toString());
-                del.setEntity(entity);
-
-                HttpResponse resp = httpClient.execute(del);
-                String respStr = EntityUtils.toString(resp.getEntity());
-
-            }
-            catch(Exception ex)
-            {
-                Log.e("ServicioRest","Error!", ex);
-                resul = false;
-            }
-
-            return resul;
-        }
-
-        protected void onPostExecute(Boolean result) {
-
-            if (result == true)
-            {
-
-            }
-        }
-    }
 
 }

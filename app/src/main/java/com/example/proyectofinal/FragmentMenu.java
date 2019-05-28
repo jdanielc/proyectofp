@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.example.proyectofinal.general.Utilidades;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -132,15 +132,19 @@ public class FragmentMenu extends Fragment implements View.OnClickListener{
 
         switch (v.getId()) {
             case R.id.btIniciom:
-
-                fragment = new FragmentMenu();
-
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
+                Toast.makeText(getContext(), "Ya se encuentra en este pantalla", Toast.LENGTH_SHORT).show();
 
                 break;
             case R.id.btLitam:
-                fragment = new FragmentInicial();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
+
+                fragment = new FragmentAlimentosPrincipal();
+                bundle.putString("usuario", usuario);
+                bundle.putInt("tipo", 0);
+                fragment.setArguments(bundle);
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_main, fragment)
+                        .commit();
                 break;
             case R.id.btForumm:
 
@@ -148,14 +152,20 @@ public class FragmentMenu extends Fragment implements View.OnClickListener{
                 bundle.putString("usuario", usuario);
                 bundle.putInt("tipo", 1);
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_main, fragment)
+                        .commit();
+
                 break;
             case R.id.btMism:
                 fragment = new FragmentAlimentosPrincipal();
                 bundle.putString("usuario", usuario);
                 bundle.putInt("tipo", 2);
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_main, fragment)
+                        .commit();
+
                 break;
             case R.id.btFavm:
 
@@ -163,11 +173,15 @@ public class FragmentMenu extends Fragment implements View.OnClickListener{
                 bundle.putString("usuario", usuario);
                 bundle.putInt("tipo", 3);
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_main, fragment)
+                        .commit();
                 break;
             case R.id.btOpcm:
                 fragment = new Opciones();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_main, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_main, fragment)
+                        .commit();
                 break;
 
         }
