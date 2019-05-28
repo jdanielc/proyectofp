@@ -78,7 +78,18 @@ public class alimentoVo implements Serializable {
     private String user;
     private int imagenDetalle;
 
-    public alimentoVo(int ID, String nombre, String info, int imagenId, String descripcion, int upvotes,  String user, int imagenDetalle){
+    public boolean isSeguro() {
+        return seguro;
+    }
+
+    public void setSeguro(boolean seguro) {
+        this.seguro = seguro;
+    }
+
+    private boolean seguro;
+
+    public alimentoVo(int ID, String nombre, String info, int imagenId, String descripcion, int upvotes,
+                      String user, int imagenDetalle, boolean seguro){
         this.nombre = nombre;
         this.info = info;
         this.imagenId = imagenId;
@@ -87,6 +98,8 @@ public class alimentoVo implements Serializable {
         this.upvotes = upvotes;
         this.user = user;
         this.imagenDetalle = imagenDetalle;
+        this.seguro = seguro;
+
     }
 
     public  alimentoVo(){}

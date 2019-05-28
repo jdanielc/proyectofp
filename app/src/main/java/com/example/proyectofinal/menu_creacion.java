@@ -1,18 +1,10 @@
 package com.example.proyectofinal;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,21 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
-import com.example.proyectofinal.Principal.IComunicaFragments;
-import com.example.proyectofinal.general.Utilidades;
 import com.example.proyectofinal.general.alimentoVo;
 import com.shashank.sony.fancytoastlib.FancyToast;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 /**
@@ -154,9 +133,9 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
                     case "Bebidas": ImagenSeleccion = R.drawable.bebidas_normales ;break;
                     case "Bebidas Alcoholicas": ImagenSeleccion = R.drawable.precocinados; break;
                     case "Cereales y Legumbres":ImagenSeleccion = R.drawable.plato; break;
-                    case "Dulces y Golosinas": ImagenSeleccion = R.drawable.precocinados; break;
+                    case "Dulces y Golosinas": ImagenSeleccion = R.drawable.plato; break;
                     case "Platos Precocinados":ImagenSeleccion = R.drawable.precocinados; break;
-                    case "Salsas y Especias":ImagenSeleccion = R.drawable.precocinados; break;
+                    case "Salsas y Especias":ImagenSeleccion = R.drawable.especias; break;
                 }
             }
             
@@ -235,7 +214,7 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
                     String descripcion = newDescripcion.getText().toString();
 
 
-                    MySQLFirebase.Action action = new MySQLFirebase.Action(tipoAccion);
+                    MySQLFirebase.Action action = new MySQLFirebase.Action(tipoAccion, getContext());
 
 
                     if(tipoAccion == 1){
@@ -263,7 +242,6 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
                     }
 
 
-                    Utilidades.waitingServer(getContext());
 
                     Bundle bundle = new Bundle();
                     Fragment fragment = new FragmentAlimentosPrincipal();

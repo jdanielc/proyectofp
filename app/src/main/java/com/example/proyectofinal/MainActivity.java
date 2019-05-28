@@ -33,7 +33,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentAlimentosPrincipal.OnFragmentInteractionListener,
-        FragmentInicial.OnFragmentInteractionListener, IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener,
+        IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener,
         Opciones.OnFragmentInteractionListener, menu_creacion.OnFragmentInteractionListener, FragmentMenu.OnFragmentInteractionListener{
 
 
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity
     private static String usuario;
     List<AuthUI.IdpConfig> providers;
     FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
-    FragmentInicial fragmentInicial;
     detalle_alimento_general detalle_alimento_general;
     menu_creacion pantallaCreacion;
 
@@ -184,7 +183,9 @@ public class MainActivity extends AppCompatActivity
             fragmentSeleccionado = true;
 
         }else if(id == R.id.nav_lista){
-            fragment = new FragmentInicial();
+            fragment = new FragmentAlimentosPrincipal();
+            bundle.putString("usuario", usuario);
+            bundle.putInt("tipo", 0);
             fragmentSeleccionado = true;
         }
         else if (id == R.id.nav_forum) {

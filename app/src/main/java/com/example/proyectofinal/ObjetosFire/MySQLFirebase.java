@@ -1,18 +1,14 @@
 package com.example.proyectofinal.ObjetosFire;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.example.proyectofinal.general.Modelo;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthRegistrar;
 import com.shashank.sony.fancytoastlib.FancyToast;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -23,9 +19,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public  class MySQLFirebase {
@@ -33,9 +26,6 @@ public  class MySQLFirebase {
 
     //NUEVO USUARIO
     public static class Insertar extends AsyncTask<String,Integer,Boolean>  {
-
-
-
 
         protected Boolean doInBackground(String... params) {
 
@@ -96,6 +86,16 @@ public  class MySQLFirebase {
         Context context;
 
         boolean existe = false;
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            progress = new ProgressDialog(context);
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setMessage("Cargando desde el servidor...");
+            progress.setMax(100);
+            progress.show();
+        }
 
         public ListarAllFavorites(Context context){
             this.context = context;
@@ -152,6 +152,7 @@ public  class MySQLFirebase {
 
 
         protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
 
             if (result)
             {
@@ -164,6 +165,7 @@ public  class MySQLFirebase {
                 FancyToast.makeText(context, "Añadido a Favoritos", FancyToast.LENGTH_SHORT, FancyToast.SUCCESS, true).show();
                 new ControlFavoritos.Insertar(usuario, alimento).execute();
             }
+            progress.dismiss();
         }
     }
 
@@ -171,11 +173,22 @@ public  class MySQLFirebase {
     public static class Action extends AsyncTask<String,Integer,Boolean> {
 
         int tipoAccion;
+        Context context;
+        ProgressDialog progress;
 
-        public Action(int tipoAccion){
+        public Action(int tipoAccion, Context context){
             this.tipoAccion = tipoAccion;
+            this.context = context;
         }
 
+        @Override
+        protected void onPreExecute() {
+            progress = new ProgressDialog(context);
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setMessage("Cargando desde el servidor...");
+            progress.setMax(100);
+            progress.show();
+        }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         protected Boolean doInBackground(String... params) {
@@ -288,11 +301,9 @@ public  class MySQLFirebase {
         }
 
         protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
 
-            if (result)
-            {
-
-            }
+           progress.dismiss();
         }
     }
 }
