@@ -63,7 +63,7 @@ class Listar extends AsyncTask<String, Integer, Boolean> {
 
                 break;
             case 3:
-                del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento/" + fragmentAlimentosPrincipal.usuario);
+                del = new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/alimento");
                 resul = HttpGet(resul, httpClient, del);
 
                 //Filtro los alimentos
@@ -188,6 +188,8 @@ class Listar extends AsyncTask<String, Integer, Boolean> {
             //Rellenamos la lista con los resultados
             fragmentAlimentosPrincipal.adapter.updateList(fragmentAlimentosPrincipal.listaAlimentos);
         }
+
+
         progress.dismiss();
     }
 }

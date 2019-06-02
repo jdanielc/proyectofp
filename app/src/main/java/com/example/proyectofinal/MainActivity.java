@@ -118,21 +118,10 @@ public class MainActivity extends AppCompatActivity
                 if (response.isNewUser()) {
 
                     String id = user.getUid();
-
-                    String nickname;
-                    if(user.getDisplayName() != null){
-                        nickname=user.getDisplayName();
-                    }else{
-                        nickname = user.getUid();
-                    }
-
-
-
                     MySQLFirebase.Insertar insertar = new MySQLFirebase.Insertar();
                     insertar.execute(
 
                             id,
-                            nickname,
                             user.getEmail()
                     );
                 }

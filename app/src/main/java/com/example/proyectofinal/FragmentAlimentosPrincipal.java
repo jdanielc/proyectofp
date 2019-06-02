@@ -113,6 +113,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                 AlimentosSeleccionados = getArguments().getInt("tipo");
                 usuario = getArguments().getString("usuario");
 
+
             }
 
 

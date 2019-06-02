@@ -165,23 +165,31 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
         switch (v.getId()){
             case R.id.idIconoFav:
 
-                String usuario = objetoAlimento.getSerializable("usuario").toString();
-                String alimentoID = alimento.getID()+"";
+                String usuario1 = objetoAlimento.getSerializable("usuario").toString();
+                String alimentoID1 = alimento.getID()+"";
 
                 MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites(getContext());
 
                 listarAllFavorites.execute(
-                        usuario,
-                        alimentoID
+                        usuario1,
+                        alimentoID1
                 );
 
                 break;
 
             case R.id.btUpvote:
 
-                FancyToast.makeText(getContext(), "Aun no implementado", FancyToast.LENGTH_SHORT, FancyToast.INFO, true).show();
+                String usuario = objetoAlimento.getSerializable("usuario").toString();
+                String alimentoID = alimento.getID()+"";
 
+                MySQLFirebase.Pushing pushing = new MySQLFirebase.Pushing(getContext(), alimento.getUpvotes());
+
+                pushing.execute(
+                        usuario,
+                        alimentoID
+                );
                 break;
+
         }
 
     }
