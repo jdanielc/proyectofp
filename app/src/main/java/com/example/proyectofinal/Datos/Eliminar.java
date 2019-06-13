@@ -1,9 +1,11 @@
-package com.example.proyectofinal.general;
+package com.example.proyectofinal.Datos;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.proyectofinal.Fragments.detalle_alimento_general;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,7 +18,7 @@ import org.json.JSONObject;
 class Eliminar extends AsyncTask<String,Integer,Boolean> {
 
 
-    private detalle_alimento_general detalle_alimento_general;
+    private com.example.proyectofinal.Fragments.detalle_alimento_general detalle_alimento_general;
 
     ProgressDialog progress;
     Context context;

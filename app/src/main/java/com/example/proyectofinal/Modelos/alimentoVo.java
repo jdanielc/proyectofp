@@ -1,4 +1,4 @@
-package com.example.proyectofinal.general;
+package com.example.proyectofinal.Modelos;
 
 import java.io.Serializable;
 

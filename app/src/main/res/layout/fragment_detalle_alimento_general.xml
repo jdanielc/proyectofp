@@ -10,7 +10,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".general.detalle_alimento_general"
+    tools:context=".Fragments.detalle_alimento_general"
     android:id="@+id/fragment_detalle_alimento_general">
 
 

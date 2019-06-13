@@ -16,9 +16,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
+import com.example.proyectofinal.Datos.Eliminar;
+import com.example.proyectofinal.Datos.MySQLFirebase;
 import com.example.proyectofinal.R;
-import com.example.proyectofinal.menu_creacion;
+import com.example.proyectofinal.Fragments.menu_creacion;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 

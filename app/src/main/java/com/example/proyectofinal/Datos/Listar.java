@@ -1,11 +1,12 @@
-package com.example.proyectofinal;
+package com.example.proyectofinal.Datos;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.proyectofinal.general.alimentoVo;
+import com.example.proyectofinal.Fragments.FragmentAlimentosPrincipal;
+import com.example.proyectofinal.Modelos.alimentoVo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -17,7 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-class Listar extends AsyncTask<String, Integer, Boolean> {
+public class Listar extends AsyncTask<String, Integer, Boolean> {
 
     int AlimentosListar;
     ProgressDialog progress;

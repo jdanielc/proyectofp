@@ -1,4 +1,4 @@
-package com.example.proyectofinal;
+package com.example.proyectofinal.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,10 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
-import com.example.proyectofinal.Principal.Adapter;
-import com.example.proyectofinal.Principal.IComunicaFragments;
-import com.example.proyectofinal.general.alimentoVo;
-import com.example.proyectofinal.general.detalle_alimento_general;
+import com.example.proyectofinal.Datos.Listar;
+import com.example.proyectofinal.Adaptadores.Adapter;
+import com.example.proyectofinal.Adaptadores.IComunicaFragments;
+import com.example.proyectofinal.R;
+import com.example.proyectofinal.Modelos.alimentoVo;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.ArrayList;
@@ -48,13 +49,13 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
     private OnFragmentInteractionListener mListener;
 
     RecyclerView recyclerView;
-    ArrayList<alimentoVo> listaAlimentos;
+    public ArrayList<alimentoVo> listaAlimentos;
 
     Activity activity;
     IComunicaFragments interfaceComunicaFragments;
-    Adapter adapter;
+    public Adapter adapter;
 
-    String usuario;
+    public String usuario;
     FloatingActionButton btNuevo;
     boolean sonMisAlimentos;
 
@@ -125,8 +126,8 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                     btNuevo.setVisibility(View.INVISIBLE);
                     break;
                 case 1:
-                    getActivity().setTitle("Forum");
-                    FancyToast.makeText(getContext(), "Forum", FancyToast.LENGTH_SHORT, FancyToast.INFO, true).show();
+                    getActivity().setTitle("Alimentos Generales");
+                    FancyToast.makeText(getContext(), "Alimentos Generales", FancyToast.LENGTH_SHORT, FancyToast.INFO, true).show();
 
                     btNuevo.setVisibility(View.INVISIBLE);
 
@@ -150,6 +151,7 @@ public class FragmentAlimentosPrincipal extends Fragment implements SearchView.O
                             menu_creacion1.setArguments(bundle);
                             //En caso de que se pulse el boton
 
+                            btNuevo.setImageResource(R.drawable.ic_autorenew);
                             getActivity().getSupportFragmentManager().beginTransaction().
                                     replace(R.id.fragment_alimentos_principal, menu_creacion1).addToBackStack(null).commit();
                         }

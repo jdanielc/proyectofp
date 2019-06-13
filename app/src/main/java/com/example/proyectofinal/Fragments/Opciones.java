@@ -1,4 +1,4 @@
-package com.example.proyectofinal;
+package com.example.proyectofinal.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,13 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
+import com.example.proyectofinal.R;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AdditionalUserInfo;
-import com.google.firebase.auth.FirebaseAuth;
 
 
 /**

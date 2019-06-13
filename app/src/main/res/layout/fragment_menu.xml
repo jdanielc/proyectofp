@@ -11,7 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".FragmentMenu"
+    tools:context=".Fragments.FragmentMenu"
     android:background="#FFFCCA"
     >
 
@@ -27,15 +27,6 @@
         />
 
 
-    <Button
-        android:id="@+id/btIniciom"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/rectangulo1"
-        android:hint="Inicio"
-        android:textColorHint="#ffffff"
-        android:textSize="25dp" />
 
     <Button
         android:id="@+id/btLitam"

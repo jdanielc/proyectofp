@@ -1,4 +1,4 @@
-package com.example.proyectofinal;
+package com.example.proyectofinal.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.proyectofinal.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -82,7 +83,6 @@ public class FragmentMenu extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         vista =  inflater.inflate(R.layout.fragment_menu, container, false);
 
-        btInicio = vista.findViewById(R.id.btIniciom);
         btLista = vista.findViewById(R.id.btLitam);
         btForum= vista.findViewById(R.id.btForumm);
         btFav = vista.findViewById(R.id.btFavm);
@@ -131,10 +131,6 @@ public class FragmentMenu extends Fragment implements View.OnClickListener{
         String usuario = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         switch (v.getId()) {
-            case R.id.btIniciom:
-                Toast.makeText(getContext(), "Ya se encuentra en este pantalla", Toast.LENGTH_SHORT).show();
-
-                break;
             case R.id.btLitam:
 
                 fragment = new FragmentAlimentosPrincipal();
