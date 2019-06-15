@@ -1,4 +1,4 @@
-package com.example.proyectofinal.general;
+package com.example.proyectofinal.Fragments;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -16,9 +16,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
+import com.example.proyectofinal.Datos.ControlFavoritos;
+import com.example.proyectofinal.Datos.MySQLFirebase;
 import com.example.proyectofinal.R;
-import com.example.proyectofinal.menu_creacion;
+import com.example.proyectofinal.Modelos.alimentoVo;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 
@@ -55,8 +56,8 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
     Bundle objetoAlimento;
 
     int tipoAccion;
-    String nombreAlimento;
-    String usuario;
+    public String nombreAlimento;
+    public String usuario;
 
 
     public detalle_alimento_general() {
@@ -165,23 +166,31 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
         switch (v.getId()){
             case R.id.idIconoFav:
 
-                String usuario = objetoAlimento.getSerializable("usuario").toString();
-                String alimentoID = alimento.getID()+"";
+                String usuario1 = objetoAlimento.getSerializable("usuario").toString();
+                String alimentoID1 = alimento.getID()+"";
 
                 MySQLFirebase.ListarAllFavorites listarAllFavorites = new MySQLFirebase.ListarAllFavorites(getContext());
 
                 listarAllFavorites.execute(
-                        usuario,
-                        alimentoID
+                        usuario1,
+                        alimentoID1
                 );
 
                 break;
 
             case R.id.btUpvote:
 
-                FancyToast.makeText(getContext(), "Aun no implementado", FancyToast.LENGTH_SHORT, FancyToast.INFO, true).show();
+                String usuario = objetoAlimento.getSerializable("usuario").toString();
+                String alimentoID = alimento.getID()+"";
 
+                MySQLFirebase.Pushing pushing = new MySQLFirebase.Pushing(getContext(), alimento.getUpvotes());
+
+                pushing.execute(
+                        usuario,
+                        alimentoID
+                );
                 break;
+
         }
 
     }
@@ -258,7 +267,7 @@ public class detalle_alimento_general extends Fragment implements View.OnClickLi
         }else if(id == R.id.idMenuEliminar){
 
         //En caso de que se seleccione eliminar, llamo a la clase para eliminar y vuelvo al fragment anterior
-        Eliminar eliminar = new Eliminar(this, getContext());
+        ControlFavoritos.Eliminar eliminar = new ControlFavoritos.Eliminar(this, getContext());
 
         eliminar.execute();
 

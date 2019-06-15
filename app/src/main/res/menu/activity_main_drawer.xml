@@ -11,11 +11,11 @@
         <item
             android:id="@+id/nav_lista"
             android:icon="@drawable/ic_inicial"
-            android:title="Lista" />
+            android:title="Alimentos Confirmados" />
         <item
             android:id="@+id/nav_forum"
             android:icon="@drawable/ic_princ"
-            android:title="Forum" />
+            android:title="Alimentos Generales" />
         <item
             android:id="@+id/nav_mis"
             android:icon="@drawable/ic_mis"

@@ -1,9 +1,12 @@
-package com.example.proyectofinal.ObjetosFire;
+package com.example.proyectofinal.Datos;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.proyectofinal.Fragments.detalle_alimento_general;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -87,8 +90,11 @@ public static class Insertar extends AsyncTask<String,Integer,Boolean> {
             this.alimento=alimento;
         }
 
+    public Eliminar(detalle_alimento_general detalle_alimento_general, Context context) {
+    }
 
-        protected Boolean doInBackground(String... params) {
+
+    protected Boolean doInBackground(String... params) {
 
             boolean resul = true;
 

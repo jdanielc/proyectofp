@@ -1,4 +1,4 @@
-package com.example.proyectofinal.Principal;
+package com.example.proyectofinal.Adaptadores;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.proyectofinal.R;
-import com.example.proyectofinal.general.alimentoVo;
+import com.example.proyectofinal.Modelos.alimentoVo;
 
 import java.util.ArrayList;
 

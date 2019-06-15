@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,35 +15,34 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
 import android.widget.Toast;
-import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
-import com.example.proyectofinal.Principal.IComunicaFragments;
-import com.example.proyectofinal.general.alimentoVo;
-import com.example.proyectofinal.general.detalle_alimento_general;
+
+import com.example.proyectofinal.Fragments.FragmentAlimentosPrincipal;
+import com.example.proyectofinal.Fragments.FragmentMenu;
+import com.example.proyectofinal.Fragments.Opciones;
+import com.example.proyectofinal.Fragments.menu_creacion;
+import com.example.proyectofinal.Datos.MySQLFirebase;
+import com.example.proyectofinal.Adaptadores.IComunicaFragments;
+import com.example.proyectofinal.Modelos.alimentoVo;
+import com.example.proyectofinal.Fragments.detalle_alimento_general;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentAlimentosPrincipal.OnFragmentInteractionListener,
         IComunicaFragments, detalle_alimento_general.OnFragmentInteractionListener,
-        Opciones.OnFragmentInteractionListener, menu_creacion.OnFragmentInteractionListener, FragmentMenu.OnFragmentInteractionListener{
-
+        Opciones.OnFragmentInteractionListener, menu_creacion.OnFragmentInteractionListener,
+        FragmentMenu.OnFragmentInteractionListener{
 
     private static final int MY_REQUEST_CODE = 7117;
 
     private static String usuario;
     List<AuthUI.IdpConfig> providers;
-    FragmentAlimentosPrincipal fragmentAlimentosPrincipal;
     detalle_alimento_general detalle_alimento_general;
-    menu_creacion pantallaCreacion;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +50,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -63,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
+        /*Declaramos un usuario de Firebase tomando el usuario actual*/
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -73,12 +70,11 @@ public class MainActivity extends AppCompatActivity
                     new AuthUI.IdpConfig.EmailBuilder().build(),//Email Builder
                     new AuthUI.IdpConfig.PhoneBuilder().build(),//Phone Builder
                     new AuthUI.IdpConfig.GoogleBuilder().build()//Email Builder
-
             );
 
             showSignInOption();
-        }else{
 
+        }else{
             usuario = user.getUid();
         }
 
@@ -86,7 +82,6 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = ((MainActivity) this).getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_main, new FragmentMenu(),"fragment_preguntas");
         transaction.commit();
-
     }
 
     public void showSignInOption() {
@@ -106,7 +101,6 @@ public class MainActivity extends AppCompatActivity
                 //Get User
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-
                 usuario = user.getUid();
 
                 Toast.makeText(this, usuario, Toast.LENGTH_SHORT).show();
@@ -118,21 +112,10 @@ public class MainActivity extends AppCompatActivity
                 if (response.isNewUser()) {
 
                     String id = user.getUid();
-
-                    String nickname;
-                    if(user.getDisplayName() != null){
-                        nickname=user.getDisplayName();
-                    }else{
-                        nickname = user.getUid();
-                    }
-
-
-
                     MySQLFirebase.Insertar insertar = new MySQLFirebase.Insertar();
                     insertar.execute(
 
                             id,
-                            nickname,
                             user.getEmail()
                     );
                 }
@@ -158,9 +141,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -170,7 +150,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         Bundle bundle = new Bundle();
-
 
         int id = item.getItemId();
         Fragment fragment = null;
@@ -227,9 +206,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
+    public void onFragmentInteraction(Uri uri) {}
 
     @Override
     public void enviarAlimento(alimentoVo alimentoVo, boolean feed) {
@@ -241,25 +218,20 @@ public class MainActivity extends AppCompatActivity
 
         bundleEnvio.putSerializable("usuario", usuario);
 
-
         //Este boleano nos indicara si se carga el recycler desde el feed o el de mis alimentos
         //Lo usaremos para saber si ocultar o no el menu
         if(feed){
             bundleEnvio.putBoolean("feed", true);
         }else{
             bundleEnvio.putBoolean("feed", false);
-
         }
 
         detalle_alimento_general.setArguments(bundleEnvio);
 
         //cargar el fragment en el activity
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_main, detalle_alimento_general).addToBackStack(null)
                 .commit();
     }
-
-
 }
 

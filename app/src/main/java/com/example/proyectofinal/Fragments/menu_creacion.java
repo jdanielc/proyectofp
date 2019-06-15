@@ -1,4 +1,4 @@
-package com.example.proyectofinal;
+package com.example.proyectofinal.Fragments;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -16,8 +16,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.proyectofinal.ObjetosFire.MySQLFirebase;
-import com.example.proyectofinal.general.alimentoVo;
+import com.example.proyectofinal.Datos.MySQLFirebase;
+import com.example.proyectofinal.R;
+import com.example.proyectofinal.Modelos.alimentoVo;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 
@@ -131,9 +132,9 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
                 btAceptar.setEnabled(true);
                 switch (selection){
                     case "Bebidas": ImagenSeleccion = R.drawable.bebidas_normales ;break;
-                    case "Bebidas Alcoholicas": ImagenSeleccion = R.drawable.precocinados; break;
+                    case "Bebidas Alcoholicas": ImagenSeleccion = R.drawable.bebidas_alcoholicas; break;
                     case "Cereales y Legumbres":ImagenSeleccion = R.drawable.plato; break;
-                    case "Dulces y Golosinas": ImagenSeleccion = R.drawable.plato; break;
+                    case "Dulces y Golosinas": ImagenSeleccion = R.drawable.dulces; break;
                     case "Platos Precocinados":ImagenSeleccion = R.drawable.precocinados; break;
                     case "Salsas y Especias":ImagenSeleccion = R.drawable.especias; break;
                 }
@@ -172,7 +173,6 @@ public class menu_creacion extends Fragment implements View.OnClickListener {
                 ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
                 int spinnerPosition = myAdap.getPosition(alimento.getImagenId());
                 spinner.setSelection(spinnerPosition);
-
                 break;
         }
 

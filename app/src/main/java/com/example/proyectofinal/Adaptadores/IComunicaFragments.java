@@ -1,6 +1,6 @@
-package com.example.proyectofinal.Principal;
+package com.example.proyectofinal.Adaptadores;
 
-import com.example.proyectofinal.general.alimentoVo;
+import com.example.proyectofinal.Modelos.alimentoVo;
 
 public interface IComunicaFragments {
 

@@ -1,4 +1,4 @@
-package com.example.proyectofinal.ObjetosFire;
+package com.example.proyectofinal.Datos;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -43,8 +43,7 @@ public  class MySQLFirebase {
 
 
                 dato.put("ID", params[0]);
-                dato.put("nickname", params[1]);
-                dato.put("email",params[2]);
+                dato.put("email",params[1]);
 
                 StringEntity entity = new StringEntity(dato.toString());
                 post.setEntity(entity);
@@ -53,7 +52,7 @@ public  class MySQLFirebase {
                 String respStr = EntityUtils.toString(resp.getEntity());
 
                 if(!respStr.equals("true"))
-                    Log.e("ServicioRest",respStr, null);
+                    Log.e("ServicioRestAddUser",respStr, null);
                     resul = false;
             }
             catch(Exception ex)
@@ -169,6 +168,99 @@ public  class MySQLFirebase {
         }
     }
 
+    public static class Pushing extends AsyncTask<String,Integer,Boolean> {
+
+
+        String usuario;
+        int alimento;
+        int upvotes;
+        Context context;
+        boolean existe = false;
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            progress = new ProgressDialog(context);
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setMessage("Cargando desde el servidor...");
+            progress.setMax(100);
+            progress.show();
+        }
+
+        public Pushing(Context context, int upvotes){
+            this.context = context;
+            this.upvotes = upvotes;
+        }
+
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpGet del =
+                    new HttpGet("http://damnation.ddns.net/daniel/phpRestPFG/public/api/upvotes/" + params[0]);
+
+            del.setHeader("content-type", "application/json");
+
+            try
+            {
+                HttpResponse resp = httpClient.execute(del);
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                JSONArray mensajes = new JSONArray(respStr);
+
+                for(int i =0; i<mensajes.length(); i++){
+
+                    JSONObject mensaje = mensajes.getJSONObject(i);
+
+
+
+                    if(mensaje.getInt("alimento") == Integer.parseInt(params[1])){
+                        resul = true;
+                        existe = true;
+                        break;
+                    }else {
+                        existe = false;
+                    }
+
+                }
+
+                /*Tomo los datos desde los paramentos*/
+
+                usuario = params[0];
+                alimento = Integer.parseInt(params[1]);
+
+
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+
+
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result) {
+                if (existe) {
+                    FancyToast.makeText(context, "-1", FancyToast.LENGTH_SHORT, FancyToast.WARNING, true).show();
+
+                } else {
+                    FancyToast.makeText(context, "+1", FancyToast.LENGTH_SHORT, FancyToast.SUCCESS, true).show();
+                }
+
+                new ControlPush(upvotes, alimento, existe).execute(
+                        usuario
+                );
+            }
+            progress.dismiss();
+        }
+    }
 
     public static class Action extends AsyncTask<String,Integer,Boolean> {
 

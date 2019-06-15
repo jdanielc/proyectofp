@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentAlimentosPrincipal"
+    tools:context=".Fragments.FragmentAlimentosPrincipal"
     android:id="@+id/fragment_alimentos_principal">
 
     <!-- TODO: Update blank fragment layout -->
