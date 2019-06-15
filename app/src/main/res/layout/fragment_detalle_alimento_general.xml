@@ -67,7 +67,7 @@
             android:id="@+id/btUpvote"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:text="PUSH"
+            android:text="VOTAR"
             android:layout_marginRight="5dp"
             android:background="@drawable/rectangulo2"/>
 

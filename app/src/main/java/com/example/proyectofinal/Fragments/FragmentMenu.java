@@ -89,7 +89,6 @@ public class FragmentMenu extends Fragment implements View.OnClickListener{
         btMis= vista.findViewById(R.id.btMism);
         btOpciones = vista.findViewById(R.id.btOpcm);
 
-        btInicio.setOnClickListener(this);
         btLista.setOnClickListener(this);
         btForum.setOnClickListener(this);
         btFav.setOnClickListener(this);
