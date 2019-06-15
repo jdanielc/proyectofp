@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Fragments.FragmentMenu"
+    android:background="#FFFCCA"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Celiacosas"
+        android:textStyle="bold"
+        android:textSize="50dp"
+        android:layout_margin="5dp"
+
+
+        />
+
+
+
+    <Button
+        android:id="@+id/btLitam"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/rectangulo1"
+        android:hint="Lista Segura"
+        android:textColorHint="#ffffff"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/btForumm"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/rectangulo1"
+        android:hint="Forum"
+        android:textColorHint="#ffffff"
+        android:textSize="25dp" />
+    <Button
+        android:hint="Mis Alimentos"
+        android:textSize="25dp"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:textColorHint="#ffffff"
+        android:layout_height="50dp"
+        android:background="@drawable/rectangulo1"
+        android:id="@+id/btMism"
+        />
+    <Button
+        android:hint="Favoritos"
+        android:textSize="25dp"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:textColorHint="#ffffff"
+        android:layout_height="50dp"
+        android:background="@drawable/rectangulo1"
+        android:id="@+id/btFavm"
+
+        />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/black"
+        android:layout_marginTop="20dp"
+        android:visibility="visible"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mas"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/ic_add_black_24dp"
+        />
+
+    <Button
+        android:hint="Opciones"
+        android:textSize="25dp"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:textColorHint="#ffffff"
+        android:layout_height="50dp"
+        android:background="@drawable/rectangulo1"
+        android:id="@+id/btOpcm"
+        />
+
+
+</LinearLayout>
+</ScrollView>
